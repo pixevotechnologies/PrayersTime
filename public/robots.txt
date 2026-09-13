@@ -1,0 +1,33 @@
+# Robots.txt for Prayerstime
+# https://prayerstime.online
+
+User-agent: *
+Allow: /
+Allow: /prayer-times/
+Allow: /ishraq-prayer-time
+Allow: /duha-prayer-time
+Allow: /chasht-prayer-time
+Allow: /tahajjud-time
+Allow: /awabeen-prayer-time
+Allow: /fajr-time
+Allow: /sunrise-time
+Allow: /maghrib-time
+Allow: /qibla
+Allow: /islamic-calendar
+Allow: /ramadan
+Allow: /tools
+Allow: /methodology
+Allow: /editorial-policy
+Allow: /about
+Allow: /privacy
+Allow: /terms
+
+# Crawlers should crawl CSS, JavaScript, and Web Fonts
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.svg$
+Allow: /*.png$
+Allow: /*.woff2$
+
+# Sitemap index
+Sitemap: https://prayerstime.online/sitemap.xml

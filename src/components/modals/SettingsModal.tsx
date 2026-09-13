@@ -1,0 +1,283 @@
+import React from 'react';
+import {
+  X,
+  Sliders,
+  Volume2,
+  VolumeX,
+  Sparkles,
+  HelpCircle,
+  Play,
+  RotateCcw,
+} from 'lucide-react';
+import { AppSettings, CalculationMethodName, MadhabType } from '../../types';
+import { CALCULATION_METHOD_LABELS } from '../../services/prayerTimes';
+import { soundService } from '../../services/soundService';
+
+interface SettingsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  settings: AppSettings;
+  onUpdateSettings: (newSettings: AppSettings) => void;
+}
+
+export const SettingsModal: React.FC<SettingsModalProps> = ({
+  isOpen,
+  onClose,
+  settings,
+  onUpdateSettings,
+}) => {
+  if (!isOpen) return null;
+
+  const handleMethodChange = (method: CalculationMethodName) => {
+    onUpdateSettings({ ...settings, method });
+  };
+
+  const handleMadhabChange = (madhab: MadhabType) => {
+    onUpdateSettings({ ...settings, madhab });
+  };
+
+  const handleTimeFormatChange = (timeFormat: '12h' | '24h') => {
+    onUpdateSettings({ ...settings, timeFormat });
+  };
+
+  const handleHijriAdjustmentChange = (adjustment: number) => {
+    onUpdateSettings({ ...settings, hijriAdjustment: adjustment });
+  };
+
+  const handleAudioTypeChange = (audioAthan: 'athan' | 'chime' | 'mute') => {
+    onUpdateSettings({ ...settings, audioAthan });
+  };
+
+  const handleVolumeChange = (vol: number) => {
+    onUpdateSettings({ ...settings, audioVolume: vol });
+  };
+
+  const handleTestAudio = () => {
+    if (settings.audioAthan === 'chime') {
+      soundService.playChime(settings.audioVolume);
+    } else if (settings.audioAthan === 'athan') {
+      soundService.playAthanSample(settings.audioVolume);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="w-full max-w-lg rounded-3xl bg-[#fcfbf9] dark:bg-[#101a17] shadow-2xl border border-stone-200 dark:border-emerald-900/40 overflow-hidden flex flex-col max-h-[90vh]">
+        {/* Modal Header */}
+        <div className="flex items-center justify-between p-5 border-b border-stone-200 dark:border-stone-800">
+          <div className="flex items-center gap-2">
+            <Sliders className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <h2 className="text-base sm:text-lg font-bold text-stone-900 dark:text-stone-100">
+              Calculation & App Settings
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-xl text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Modal Body */}
+        <div className="p-5 overflow-y-auto space-y-6 flex-1 text-xs sm:text-sm">
+          {/* 1. Calculation Method */}
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
+              Calculation Method
+            </label>
+            <p className="text-xs text-stone-500 dark:text-stone-400">
+              Select the scientific convention adopted by your regional religious authority.
+            </p>
+            <select
+              value={settings.method}
+              onChange={(e) => handleMethodChange(e.target.value as CalculationMethodName)}
+              className="w-full p-2.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#142320] text-stone-900 dark:text-stone-100 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+            >
+              {Object.entries(CALCULATION_METHOD_LABELS).map(([key, item]) => (
+                <option key={key} value={key}>
+                  {item.name} ({item.region})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 2. Juristic Method (Asr) */}
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
+              Juristic Method (Asr Shadow Ratio)
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => handleMadhabChange('shafi')}
+                className={`p-3 rounded-xl border text-left cursor-pointer transition-all ${
+                  settings.madhab === 'shafi'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/70 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
+                }`}
+              >
+                <span className="block font-semibold">Standard</span>
+                <span className="text-[11px] text-stone-400 block mt-0.5">
+                  Shafi'i, Maliki, Hanbali (Shadow = 1x)
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleMadhabChange('hanafi')}
+                className={`p-3 rounded-xl border text-left cursor-pointer transition-all ${
+                  settings.madhab === 'hanafi'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/70 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
+                }`}
+              >
+                <span className="block font-semibold">Hanafi</span>
+                <span className="text-[11px] text-stone-400 block mt-0.5">
+                  Hanafi school (Shadow = 2x)
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* 3. Time Display Format */}
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
+              Time Format
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => handleTimeFormatChange('12h')}
+                className={`py-2 px-3 rounded-xl border text-center font-semibold cursor-pointer transition-all ${
+                  settings.timeFormat === '12h'
+                    ? 'bg-emerald-700 text-white font-bold border-emerald-600'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
+                }`}
+              >
+                12-Hour (e.g. 05:30 PM)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTimeFormatChange('24h')}
+                className={`py-2 px-3 rounded-xl border text-center font-semibold cursor-pointer transition-all ${
+                  settings.timeFormat === '24h'
+                    ? 'bg-emerald-700 text-white font-bold border-emerald-600'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
+                }`}
+              >
+                24-Hour (e.g. 17:30)
+              </button>
+            </div>
+          </div>
+
+          {/* 4. Hijri Calendar Sighting Adjustment */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
+                Hijri Moon Sighting Adjustment
+              </label>
+              <span className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400">
+                {settings.hijriAdjustment > 0 ? `+${settings.hijriAdjustment}` : settings.hijriAdjustment} days
+              </span>
+            </div>
+            <p className="text-xs text-stone-500 dark:text-stone-400">
+              Align with local Hilal moon sightings if your country's moon declaration differs by 1 or 2 days.
+            </p>
+            <div className="flex items-center justify-between gap-1">
+              {[-2, -1, 0, 1, 2].map((adj) => (
+                <button
+                  key={adj}
+                  type="button"
+                  onClick={() => handleHijriAdjustmentChange(adj)}
+                  className={`flex-1 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-colors ${
+                    settings.hijriAdjustment === adj
+                      ? 'bg-emerald-700 text-white border-emerald-600'
+                      : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-50'
+                  }`}
+                >
+                  {adj > 0 ? `+${adj}` : adj}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 5. Prayer Sound & Volume */}
+          <div className="space-y-3 pt-2 border-t border-stone-200 dark:border-stone-800">
+            <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
+              Prayer Call & Notification Audio
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => handleAudioTypeChange('athan')}
+                className={`py-2 px-2.5 rounded-xl border text-center text-xs font-semibold cursor-pointer transition-all ${
+                  settings.audioAthan === 'athan'
+                    ? 'bg-emerald-700 text-white font-bold border-emerald-600'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
+                }`}
+              >
+                Athan Audio
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAudioTypeChange('chime')}
+                className={`py-2 px-2.5 rounded-xl border text-center text-xs font-semibold cursor-pointer transition-all ${
+                  settings.audioAthan === 'chime'
+                    ? 'bg-emerald-700 text-white font-bold border-emerald-600'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
+                }`}
+              >
+                Gentle Chime
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAudioTypeChange('mute')}
+                className={`py-2 px-2.5 rounded-xl border text-center text-xs font-semibold cursor-pointer transition-all ${
+                  settings.audioAthan === 'mute'
+                    ? 'bg-stone-700 text-white font-bold border-stone-600'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
+                }`}
+              >
+                Muted
+              </button>
+            </div>
+
+            {settings.audioAthan !== 'mute' && (
+              <div className="flex items-center gap-3 pt-2">
+                <Volume2 className="w-4 h-4 text-stone-400" />
+                <input
+                  type="range"
+                  min="0.1"
+                  max="1.0"
+                  step="0.05"
+                  value={settings.audioVolume}
+                  onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                  className="flex-1 accent-emerald-600 cursor-pointer"
+                />
+                <button
+                  type="button"
+                  onClick={handleTestAudio}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 text-xs font-semibold cursor-pointer"
+                >
+                  <Play className="w-3 h-3 text-emerald-600" />
+                  <span>Test</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div className="p-4 border-t border-stone-200 dark:border-stone-800 bg-[#f7f5f0] dark:bg-[#0c1412] flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+          >
+            Save & Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
