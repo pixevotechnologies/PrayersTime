@@ -11,18 +11,28 @@ import {
   Sun,
   Moon,
   Monitor,
+  Database,
+  RefreshCw,
+  CheckCircle2,
+  Wifi,
+  WifiOff,
+  Trash2,
 } from 'lucide-react';
-import { AppSettings, CalculationMethodName, MadhabType } from '../../types';
+import { AppSettings, CalculationMethodName, LocationData, MadhabType } from '../../types';
 import { CALCULATION_METHOD_LABELS } from '../../services/prayerTimes';
 import { soundService } from '../../services/soundService';
 import { useLanguage } from '../../services/i18n';
 import { useTheme } from '../../services/themeContext';
+import { DEFAULT_LOCATION } from '../../services/citiesData';
+import { usePrayerCache } from '../../hooks/usePrayerCache';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   settings: AppSettings;
   onUpdateSettings: (newSettings: AppSettings) => void;
+  location?: LocationData;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -30,9 +40,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose,
   settings,
   onUpdateSettings,
+  location = DEFAULT_LOCATION,
 }) => {
   const { t } = useLanguage();
   const { theme, setTheme } = useTheme();
+  const isOnline = useOnlineStatus();
+  const { status: cacheStatus, isSyncing, syncMessage, syncCache, clearCache } = usePrayerCache(
+    location,
+    settings
+  );
 
   if (!isOpen) return null;
 
@@ -325,6 +341,99 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </button>
               </div>
             )}
+          </div>
+
+          {/* 6. PWA Offline Storage & 30-Day Prayer Cache */}
+          <div className="space-y-3 pt-3 border-t border-stone-200 dark:border-stone-800">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
+                PWA Offline Support & Cache
+              </label>
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                  isOnline
+                    ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                    : 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+                }`}
+              >
+                {isOnline ? (
+                  <>
+                    <Wifi className="w-3 h-3 text-emerald-600" />
+                    <span>Online</span>
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="w-3 h-3 text-amber-600" />
+                    <span>Offline Active</span>
+                  </>
+                )}
+              </span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-stone-100 dark:bg-[#13201d] border border-stone-200 dark:border-emerald-900/40 space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-xl bg-emerald-600 text-white shrink-0 mt-0.5">
+                  <Database className="w-4 h-4" />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-stone-900 dark:text-stone-100 text-xs sm:text-sm">
+                      30-Day Local Prayer Cache
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300">
+                      <CheckCircle2 className="w-3 h-3" />
+                      {cacheStatus.daysCached > 0 ? `${cacheStatus.daysCached} Days Stored` : 'Offline Ready'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-stone-600 dark:text-stone-400 leading-relaxed">
+                    Prayer times API responses and calendar schedules are cached locally on your device for at least 30 days (stored for 35 days). You can use all prayer calculations, countdowns, and tools offline without any internet connection.
+                  </p>
+                </div>
+              </div>
+
+              {/* Cache Details Breakdown */}
+              <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
+                <div className="p-2 rounded-lg bg-white dark:bg-[#0e1715] border border-stone-200/60 dark:border-stone-800">
+                  <span className="text-stone-400 block text-[10px]">Cache Duration</span>
+                  <span className="font-semibold text-stone-800 dark:text-stone-200">
+                    35 Days (Guaranteed ≥ 30d)
+                  </span>
+                </div>
+                <div className="p-2 rounded-lg bg-white dark:bg-[#0e1715] border border-stone-200/60 dark:border-stone-800">
+                  <span className="text-stone-400 block text-[10px]">Data Source</span>
+                  <span className="font-semibold text-stone-800 dark:text-stone-200 capitalize">
+                    {cacheStatus.source === 'api' ? 'Aladhan API Verified' : 'Local Astronomical'}
+                  </span>
+                </div>
+              </div>
+
+              {syncMessage && (
+                <div className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-950/40 p-2 rounded-lg border border-emerald-200 dark:border-emerald-800/40">
+                  {syncMessage}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => syncCache(true)}
+                  disabled={isSyncing}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white text-xs font-semibold cursor-pointer transition-colors shadow-2xs"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                  <span>{isSyncing ? 'Syncing 30 Days...' : 'Refresh 30-Day Cache'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={clearCache}
+                  title="Clear offline cache"
+                  className="inline-flex items-center justify-center p-2 rounded-xl border border-stone-300 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:text-rose-600 hover:bg-stone-50 dark:hover:bg-stone-800 text-xs transition-colors cursor-pointer"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

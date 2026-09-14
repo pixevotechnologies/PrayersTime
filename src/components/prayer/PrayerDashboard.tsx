@@ -15,6 +15,7 @@ import {
   HelpCircle,
   TrendingUp,
   Star,
+  Database,
 } from 'lucide-react';
 import {
   AppSettings,
@@ -38,6 +39,7 @@ import {
   getFavoriteLocations,
 } from '../../services/citiesData';
 import { useLanguage } from '../../services/i18n';
+import { usePrayerCache } from '../../hooks/usePrayerCache';
 
 interface PrayerDashboardProps {
   location: LocationData;
@@ -76,6 +78,7 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
   const isCurrentFav = isLocationFavorite(location, favorites);
 
   const { t, getPrayerName, language } = useLanguage();
+  const { status: cacheStatus } = usePrayerCache(location, settings);
 
   const handleToggleCurrentFav = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -230,6 +233,15 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
           <span className="font-semibold text-emerald-800 dark:text-emerald-400 font-arabic text-sm sm:text-base">
             {hijri.formatted}
           </span>
+          <span className="hidden sm:inline text-stone-300 dark:text-stone-700">•</span>
+          <button
+            onClick={onOpenSettingsModal}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-stone-100 dark:bg-[#121f1b] text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-emerald-900/40 hover:border-emerald-500/60 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all cursor-pointer shadow-2xs"
+            title="30-day offline cache status — Click to manage"
+          >
+            <Database className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+            <span>30-Day Offline Cache Active</span>
+          </button>
         </div>
       </section>
 

@@ -380,6 +380,7 @@ function AppContent() {
         onClose={() => setIsSettingsModalOpen(false)}
         settings={settings}
         onUpdateSettings={handleUpdateSettings}
+        location={location}
       />
     </div>
   );

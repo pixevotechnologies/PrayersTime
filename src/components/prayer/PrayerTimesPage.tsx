@@ -9,6 +9,7 @@ import {
   MapPin,
   Sliders,
   Sparkles,
+  Database,
 } from 'lucide-react';
 import {
   AppSettings,
@@ -22,6 +23,7 @@ import {
   CALCULATION_METHOD_LABELS,
 } from '../../services/prayerTimes';
 import { useLanguage } from '../../services/i18n';
+import { usePrayerCache } from '../../hooks/usePrayerCache';
 
 interface PrayerTimesPageProps {
   location: LocationData;
@@ -41,6 +43,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
   const { t, getPrayerName, language } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<'daily' | 'monthly'>('daily');
+  const { status: cacheStatus } = usePrayerCache(location, settings);
 
   // Daily prayer calculations for selected date
   const dayPrayers = calculateDailyPrayers(location, selectedDate, settings);
@@ -149,6 +152,15 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
           >
             <Sliders className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>{t('dash.settings')}</span>
+          </button>
+
+          <button
+            onClick={onOpenSettingsModal}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-stone-100 dark:bg-[#121c19] text-xs font-semibold text-emerald-800 dark:text-emerald-300 border border-stone-200 dark:border-emerald-900/30 hover:border-emerald-500/50 transition-colors cursor-pointer"
+            title="30-day offline cache status — Click to view in Settings"
+          >
+            <Database className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>30-Day Offline Cached</span>
           </button>
 
           {/* Daily vs Monthly Switcher */}

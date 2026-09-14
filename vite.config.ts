@@ -45,6 +45,55 @@ export default defineConfig(() => {
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
+          navigateFallback: '/index.html',
+          runtimeCaching: [
+            {
+              // Prayer times API caching - cached for at least 30 days (35 days configured)
+              urlPattern: /^https:\/\/api\.aladhan\.com\/v1\/.*/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'prayer-times-api-cache',
+                expiration: {
+                  maxEntries: 150,
+                  maxAgeSeconds: 35 * 24 * 60 * 60, // 35 days (exceeds 30 days offline requirement)
+                  purgeOnQuotaError: true,
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
+            },
+            {
+              // Google Fonts stylesheets
+              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'google-fonts-stylesheets',
+                expiration: {
+                  maxEntries: 20,
+                  maxAgeSeconds: 365 * 24 * 60 * 60,
+                },
+              },
+            },
+            {
+              // Google Fonts webfont files
+              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'google-fonts-webfonts',
+                expiration: {
+                  maxEntries: 30,
+                  maxAgeSeconds: 365 * 24 * 60 * 60,
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
+            },
+          ],
         },
         devOptions: {
           enabled: true,
