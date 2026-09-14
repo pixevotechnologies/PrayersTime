@@ -23,6 +23,7 @@ import {
 } from '../../services/prayerTimes';
 import { updateSeoTags } from '../../services/seoManager';
 import { SupportedLanguage } from '../../services/seoData';
+import { useLanguage } from '../../services/i18n';
 
 interface CityPageProps {
   cityLocation: LocationData;
@@ -35,10 +36,12 @@ interface CityPageProps {
 export const CityPage: React.FC<CityPageProps> = ({
   cityLocation,
   settings,
-  language = 'en',
+  language: propLanguage,
   onSetAsCurrentLocation,
   onNavigate,
 }) => {
+  const { t, getPrayerName, language: ctxLanguage } = useLanguage();
+  const language = propLanguage || ctxLanguage;
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [copied, setCopied] = useState(false);
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(0);
@@ -199,13 +202,15 @@ export const CityPage: React.FC<CityPageProps> = ({
 
           <div className="mt-4 flex items-baseline justify-between flex-wrap gap-4">
             <div>
-              <h2 className="text-4xl sm:text-5xl font-extrabold">{prayersData.nextPrayer?.name}</h2>
+              <h2 className="text-4xl sm:text-5xl font-extrabold">
+                {prayersData.nextPrayer ? getPrayerName(prayersData.nextPrayer.name) : ''}
+              </h2>
               <span className="text-2xl sm:text-3xl font-mono text-emerald-100 font-semibold mt-1 block">
                 {prayersData.nextPrayer?.time}
               </span>
             </div>
             <div className="text-right">
-              <span className="text-xs text-emerald-200 uppercase tracking-wider">Remaining</span>
+              <span className="text-xs text-emerald-200 uppercase tracking-wider">{t('prayer.remaining')}</span>
               <span className="text-xl sm:text-2xl font-mono font-bold text-amber-300 block">
                 {countdown.formattedRemaining}
               </span>
@@ -266,7 +271,7 @@ export const CityPage: React.FC<CityPageProps> = ({
                       : 'text-stone-800 dark:text-stone-200'
                   }
                 >
-                  {prayer.name}
+                  {getPrayerName(prayer.name)}
                 </span>
                 <span className="font-arabic text-stone-400 dark:text-stone-500">
                   {prayer.arabicName}

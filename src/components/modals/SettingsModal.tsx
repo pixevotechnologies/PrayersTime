@@ -8,10 +8,15 @@ import {
   HelpCircle,
   Play,
   RotateCcw,
+  Sun,
+  Moon,
+  Monitor,
 } from 'lucide-react';
 import { AppSettings, CalculationMethodName, MadhabType } from '../../types';
 import { CALCULATION_METHOD_LABELS } from '../../services/prayerTimes';
 import { soundService } from '../../services/soundService';
+import { useLanguage } from '../../services/i18n';
+import { useTheme } from '../../services/themeContext';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -26,6 +31,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   settings,
   onUpdateSettings,
 }) => {
+  const { t } = useLanguage();
+  const { theme, setTheme } = useTheme();
+
   if (!isOpen) return null;
 
   const handleMethodChange = (method: CalculationMethodName) => {
@@ -68,12 +76,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="flex items-center gap-2">
             <Sliders className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             <h2 className="text-base sm:text-lg font-bold text-stone-900 dark:text-stone-100">
-              Calculation & App Settings
+              {t('settings.title')}
             </h2>
           </div>
           <button
             onClick={onClose}
             className="p-1.5 rounded-xl text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
@@ -81,10 +90,60 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Modal Body */}
         <div className="p-5 overflow-y-auto space-y-6 flex-1 text-xs sm:text-sm">
+          {/* 0. Appearance / Theme */}
+          <div className="space-y-2 pb-4 border-b border-stone-200 dark:border-stone-800">
+            <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
+              {t('theme.appearance')}
+            </label>
+            <p className="text-xs text-stone-500 dark:text-stone-400">
+              Choose your visual theme or sync automatically with your device system preferences.
+            </p>
+            <div className="grid grid-cols-3 gap-2.5">
+              <button
+                type="button"
+                onClick={() => setTheme('light')}
+                className={`p-3 rounded-2xl border text-center flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                  theme === 'light'
+                    ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-500 text-amber-950 dark:text-amber-200 ring-2 ring-amber-400/40 font-bold'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:border-stone-400'
+                }`}
+              >
+                <Sun className={`w-5 h-5 ${theme === 'light' ? 'text-amber-500' : 'text-stone-400'}`} />
+                <span className="text-xs font-semibold">{t('theme.light')}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTheme('dark')}
+                className={`p-3 rounded-2xl border text-center flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                  theme === 'dark'
+                    ? 'bg-emerald-950/70 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/40 font-bold'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:border-stone-400'
+                }`}
+              >
+                <Moon className={`w-5 h-5 ${theme === 'dark' ? 'text-emerald-400' : 'text-stone-400'}`} />
+                <span className="text-xs font-semibold">{t('theme.dark')}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTheme('system')}
+                className={`p-3 rounded-2xl border text-center flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                  theme === 'system'
+                    ? 'bg-emerald-900/30 border-emerald-500 text-emerald-800 dark:text-emerald-200 ring-2 ring-emerald-500/40 font-bold'
+                    : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:border-stone-400'
+                }`}
+              >
+                <Monitor className={`w-5 h-5 ${theme === 'system' ? 'text-emerald-600 dark:text-emerald-400' : 'text-stone-400'}`} />
+                <span className="text-xs font-semibold">{t('theme.system')}</span>
+              </button>
+            </div>
+          </div>
+
           {/* 1. Calculation Method */}
           <div className="space-y-2">
             <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
-              Calculation Method
+              {t('settings.calcMethod')}
             </label>
             <p className="text-xs text-stone-500 dark:text-stone-400">
               Select the scientific convention adopted by your regional religious authority.
@@ -92,7 +151,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <select
               value={settings.method}
               onChange={(e) => handleMethodChange(e.target.value as CalculationMethodName)}
-              className="w-full p-2.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#142320] text-stone-900 dark:text-stone-100 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+              className="w-full p-2.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#142320] text-stone-900 dark:text-stone-100 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
             >
               {Object.entries(CALCULATION_METHOD_LABELS).map(([key, item]) => (
                 <option key={key} value={key}>
@@ -105,7 +164,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* 2. Juristic Method (Asr) */}
           <div className="space-y-2">
             <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
-              Juristic Method (Asr Shadow Ratio)
+              {t('settings.juristic')}
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -117,7 +176,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
                 }`}
               >
-                <span className="block font-semibold">Standard</span>
+                <span className="block font-semibold">{t('set.standard')}</span>
                 <span className="text-[11px] text-stone-400 block mt-0.5">
                   Shafi'i, Maliki, Hanbali (Shadow = 1x)
                 </span>
@@ -132,7 +191,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
                 }`}
               >
-                <span className="block font-semibold">Hanafi</span>
+                <span className="block font-semibold">{t('set.hanafi')}</span>
                 <span className="text-[11px] text-stone-400 block mt-0.5">
                   Hanafi school (Shadow = 2x)
                 </span>
@@ -143,7 +202,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* 3. Time Display Format */}
           <div className="space-y-2">
             <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
-              Time Format
+              {t('set.timeFormat')}
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -155,7 +214,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
                 }`}
               >
-                12-Hour (e.g. 05:30 PM)
+                {t('set.format12')}
               </button>
               <button
                 type="button"
@@ -166,7 +225,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
                 }`}
               >
-                24-Hour (e.g. 17:30)
+                {t('set.format24')}
               </button>
             </div>
           </div>
@@ -175,7 +234,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
-                Hijri Moon Sighting Adjustment
+                {t('set.hijriAdj')}
               </label>
               <span className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400">
                 {settings.hijriAdjustment > 0 ? `+${settings.hijriAdjustment}` : settings.hijriAdjustment} days
@@ -205,7 +264,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* 5. Prayer Sound & Volume */}
           <div className="space-y-3 pt-2 border-t border-stone-200 dark:border-stone-800">
             <label className="block text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
-              Prayer Call & Notification Audio
+              {t('settings.notifications')}
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -217,7 +276,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
                 }`}
               >
-                Athan Audio
+                {t('set.athanTone')}
               </button>
               <button
                 type="button"
@@ -228,7 +287,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
                 }`}
               >
-                Gentle Chime
+                {t('set.chimeTone')}
               </button>
               <button
                 type="button"
@@ -239,7 +298,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     : 'bg-white dark:bg-[#142320] border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300'
                 }`}
               >
-                Muted
+                {t('set.muteTone')}
               </button>
             </div>
 
@@ -254,6 +313,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   value={settings.audioVolume}
                   onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
                   className="flex-1 accent-emerald-600 cursor-pointer"
+                  aria-label="Audio volume"
                 />
                 <button
                   type="button"
@@ -261,7 +321,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 text-xs font-semibold cursor-pointer"
                 >
                   <Play className="w-3 h-3 text-emerald-600" />
-                  <span>Test</span>
+                  <span>{t('set.testTone')}</span>
                 </button>
               </div>
             )}
@@ -274,7 +334,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
           >
-            Save & Close
+            {t('modal.close')}
           </button>
         </div>
       </div>

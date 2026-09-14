@@ -19,6 +19,8 @@ import { StaticPages } from './components/common/StaticPages';
 import { DEFAULT_LOCATION, GLOBAL_CITIES, POPULAR_CITIES, EnrichedCity } from './services/citiesData';
 import { AppSettings, DEFAULT_SETTINGS, LocationData } from './types';
 import { SupportedLanguage, SPECIAL_PRAYER_INTENTS } from './services/seoData';
+import { ThemeProvider, useTheme } from './services/themeContext';
+import { LanguageProvider, useLanguage } from './services/i18n';
 
 // Map of canonical URL path to internal route ID
 const CANONICAL_ROUTE_MAP: Record<string, string> = {
@@ -124,61 +126,11 @@ function getUrlForRoute(route: string, city?: LocationData): string {
   return `/${route}`;
 }
 
-export default function App() {
-  // 1. Theme State (Dark mode vs Light mode)
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('prayerstime_theme');
-      if (savedTheme) return savedTheme === 'dark';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
+function AppContent() {
+  const { isDark, toggleTheme } = useTheme();
+  const { language, setLanguage, dir } = useLanguage();
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('prayerstime_theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('prayerstime_theme', 'light');
-    }
-  }, [darkMode]);
-
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => !prev);
-  };
-
-  // 2. Language State (Multilingual SEO & UI)
-  const [language, setLanguage] = useState<SupportedLanguage>(() => {
-    if (typeof window !== 'undefined') {
-      // Check query parameter ?lang=
-      const urlParams = new URLSearchParams(window.location.search);
-      const qLang = urlParams.get('lang') as SupportedLanguage;
-      if (qLang && ['en', 'ar', 'ur', 'hi', 'id', 'tr', 'bn', 'fr'].includes(qLang)) {
-        return qLang;
-      }
-      const saved = localStorage.getItem('prayerstime_lang') as SupportedLanguage;
-      if (saved && ['en', 'ar', 'ur', 'hi', 'id', 'tr', 'bn', 'fr'].includes(saved)) {
-        return saved;
-      }
-    }
-    return 'en';
-  });
-
-  const handleSelectLanguage = (lang: SupportedLanguage) => {
-    setLanguage(lang);
-    localStorage.setItem('prayerstime_lang', lang);
-    document.documentElement.lang = lang;
-    document.documentElement.dir = lang === 'ar' || lang === 'ur' ? 'rtl' : 'ltr';
-  };
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    document.documentElement.dir = language === 'ar' || language === 'ur' ? 'rtl' : 'ltr';
-  }, [language]);
-
-  // 3. Location State
+  // 1. Location State
   const [location, setLocation] = useState<LocationData>(() => {
     if (typeof window !== 'undefined') {
       const savedLoc = localStorage.getItem('prayerstime_location');
@@ -198,7 +150,7 @@ export default function App() {
     localStorage.setItem('prayerstime_location', JSON.stringify(newLoc));
   };
 
-  // 4. Settings State
+  // 2. Settings State
   const [settings, setSettings] = useState<AppSettings>(() => {
     if (typeof window !== 'undefined') {
       const savedSettings = localStorage.getItem('prayerstime_settings');
@@ -218,11 +170,11 @@ export default function App() {
     localStorage.setItem('prayerstime_settings', JSON.stringify(newSettings));
   };
 
-  // 5. Modals State
+  // 3. Modals State
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
-  // 6. Routing State (Path-based + Hash fallback for full SEO & browser compatibility)
+  // 4. Routing State (Path-based + Hash fallback for full SEO & browser compatibility)
   const [currentRoute, setCurrentRoute] = useState<string>(() => parseRouteFromUrl());
 
   useEffect(() => {
@@ -282,7 +234,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] dark:bg-[#0c1412] text-stone-900 dark:text-stone-100 flex flex-col font-sans selection:bg-emerald-200 selection:text-emerald-950 transition-colors">
+    <div
+      dir={dir}
+      className="min-h-screen bg-[#faf8f5] dark:bg-[#0c1412] text-stone-900 dark:text-stone-100 flex flex-col font-sans selection:bg-emerald-200 selection:text-emerald-950 transition-colors"
+    >
       {/* Top Navigation Header */}
       <Header
         currentRoute={currentRoute}
@@ -290,10 +245,10 @@ export default function App() {
         location={location}
         onOpenLocationModal={() => setIsLocationModalOpen(true)}
         onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
-        darkMode={darkMode}
-        onToggleDarkMode={toggleDarkMode}
+        darkMode={isDark}
+        onToggleDarkMode={toggleTheme}
         language={language}
-        onSelectLanguage={handleSelectLanguage}
+        onSelectLanguage={setLanguage}
       />
 
       {/* Main Content Area */}
@@ -399,7 +354,7 @@ export default function App() {
         settings={settings}
         language={language}
         onSelectCity={handleSelectCityFromFooter}
-        onSelectLanguage={handleSelectLanguage}
+        onSelectLanguage={setLanguage}
       />
 
       {/* Mobile Bottom Bar for high-touch thumb-friendly UX */}
@@ -427,5 +382,15 @@ export default function App() {
         onUpdateSettings={handleUpdateSettings}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }

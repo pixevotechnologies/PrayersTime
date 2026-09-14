@@ -14,6 +14,7 @@ import {
   BookOpen,
   HelpCircle,
   TrendingUp,
+  Star,
 } from 'lucide-react';
 import {
   AppSettings,
@@ -31,6 +32,12 @@ import {
 } from '../../services/prayerTimes';
 import { soundService } from '../../services/soundService';
 import { updateSeoTags } from '../../services/seoManager';
+import {
+  isLocationFavorite,
+  toggleFavoriteLocation,
+  getFavoriteLocations,
+} from '../../services/citiesData';
+import { useLanguage } from '../../services/i18n';
 
 interface PrayerDashboardProps {
   location: LocationData;
@@ -55,6 +62,26 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
     calculateLiveCountdown(prayerData.nextPrayer, prayerData.prayers)
   );
   const [soundPlaying, setSoundPlaying] = useState(false);
+  const [favorites, setFavorites] = useState<LocationData[]>(() => getFavoriteLocations());
+
+  // Listen for storage changes if favorites change in modal
+  useEffect(() => {
+    const handleStorage = () => {
+      setFavorites(getFavoriteLocations());
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+  const isCurrentFav = isLocationFavorite(location, favorites);
+
+  const { t, getPrayerName, language } = useLanguage();
+
+  const handleToggleCurrentFav = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = toggleFavoriteLocation(location, favorites);
+    setFavorites(updated);
+  };
 
   // Recalculate prayers when location, date, or settings change
   useEffect(() => {
@@ -86,14 +113,14 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
   const hijri = getHijriDate(currentDate, settings.hijriAdjustment);
   const qibla = getQiblaInfo(location.latitude, location.longitude);
 
-  const formattedGregorian = currentDate.toLocaleDateString('en-US', {
+  const formattedGregorian = currentDate.toLocaleDateString(language === 'en' ? 'en-US' : language, {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
     year: 'numeric',
   });
 
-  const formattedLiveTime = currentDate.toLocaleTimeString('en-US', {
+  const formattedLiveTime = currentDate.toLocaleTimeString(language === 'en' ? 'en-US' : language, {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
@@ -165,15 +192,38 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
 
         {/* Location & Date Bar */}
         <div className="pt-2 flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm text-stone-600 dark:text-stone-300">
-          <button
-            onClick={onOpenLocationModal}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 font-semibold border border-emerald-200/60 dark:border-emerald-800/50 hover:bg-emerald-100 transition-colors cursor-pointer"
-          >
-            <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>
-              {location.city}, {location.country}
-            </span>
-          </button>
+          <div className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/50 p-0.5 shadow-2xs">
+            <button
+              onClick={onOpenLocationModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1 text-emerald-900 dark:text-emerald-300 font-semibold hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40 rounded-full transition-colors cursor-pointer"
+              title="Change location or switch favorites"
+            >
+              <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>
+                {location.city}, {location.country}
+              </span>
+            </button>
+            <button
+              onClick={handleToggleCurrentFav}
+              className={`p-1 rounded-full transition-colors cursor-pointer mr-0.5 ${
+                isCurrentFav
+                  ? 'text-amber-500 hover:bg-amber-100/60 dark:hover:bg-amber-950/60'
+                  : 'text-stone-400 hover:text-amber-500 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/40'
+              }`}
+              title={isCurrentFav ? 'Saved in favorites' : 'Add to favorites'}
+              aria-label={
+                isCurrentFav
+                  ? `Remove ${location.city} from favorites`
+                  : `Save ${location.city} to favorites`
+              }
+            >
+              <Star
+                className={`w-3.5 h-3.5 ${
+                  isCurrentFav ? 'fill-amber-500 text-amber-500' : 'text-stone-400'
+                }`}
+              />
+            </button>
+          </div>
           <span className="hidden sm:inline text-stone-300 dark:text-stone-700">•</span>
           <span className="font-medium text-stone-700 dark:text-stone-200">{formattedGregorian}</span>
           <span className="hidden sm:inline text-stone-300 dark:text-stone-700">•</span>
@@ -202,19 +252,19 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
               <div className="flex items-center gap-2">
                 <span className="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping" />
                 <span className="text-xs uppercase tracking-widest font-bold text-amber-300">
-                  NEXT PRAYER
+                  {t('status.nextPrayer')}
                 </span>
                 <span className="text-xs text-emerald-200/70 font-mono">
-                  · Local time {formattedLiveTime}
+                  · {formattedLiveTime}
                 </span>
               </div>
 
               <div className="flex items-baseline gap-4">
                 <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white">
-                  {prayerData.nextPrayer.name}
+                  {getPrayerName(prayerData.nextPrayer.name).name}
                 </h2>
                 <span className="text-2xl sm:text-3xl text-emerald-300 font-arabic font-bold">
-                  {prayerData.nextPrayer.arabicName}
+                  {getPrayerName(prayerData.nextPrayer.name).arabic}
                 </span>
               </div>
 
@@ -225,7 +275,11 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
               <div className="pt-1 flex items-center gap-3">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-800/80 border border-emerald-600/40 text-amber-300 text-sm font-semibold tracking-wide">
                   <Clock className="w-4 h-4 text-amber-400 animate-pulse" />
-                  <span>{countdown.formattedRemaining}</span>
+                  <span>
+                    {countdown.hours.toString().padStart(2, '0')}{t('status.h')}{' '}
+                    {countdown.minutes.toString().padStart(2, '0')}{t('status.m')}{' '}
+                    {countdown.seconds.toString().padStart(2, '0')}{t('status.s')} · {t('status.timeRemaining')}
+                  </span>
                 </div>
 
                 {/* Audio preview button */}
@@ -238,12 +292,12 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
                   {soundPlaying ? (
                     <>
                       <Volume2 className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
-                      <span>Playing...</span>
+                      <span>{t('status.active')}...</span>
                     </>
                   ) : (
                     <>
                       <Volume2 className="w-3.5 h-3.5" />
-                      <span>Listen Athan</span>
+                      <span>{t('dash.soundAthan')}</span>
                     </>
                   )}
                 </button>
@@ -282,7 +336,7 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
                     {Math.round(countdown.progressPercentage)}%
                   </span>
                   <span className="text-[10px] uppercase text-emerald-300 tracking-wider">
-                    Cycle
+                    {t('status.active')}
                   </span>
                 </div>
               </div>
@@ -293,19 +347,25 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
                   <span className="block text-2xl font-black font-mono text-white">
                     {countdown.hours.toString().padStart(2, '0')}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wider text-emerald-300">Hours</span>
+                  <span className="text-[10px] uppercase tracking-wider text-emerald-300">
+                    {t('status.hours')}
+                  </span>
                 </div>
                 <div className="bg-emerald-900/60 p-2.5 rounded-xl border border-emerald-700/30 min-w-[60px]">
                   <span className="block text-2xl font-black font-mono text-white">
                     {countdown.minutes.toString().padStart(2, '0')}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wider text-emerald-300">Mins</span>
+                  <span className="text-[10px] uppercase tracking-wider text-emerald-300">
+                    {t('status.minutes')}
+                  </span>
                 </div>
                 <div className="bg-emerald-900/60 p-2.5 rounded-xl border border-emerald-700/30 min-w-[60px]">
                   <span className="block text-2xl font-black font-mono text-amber-300">
                     {countdown.seconds.toString().padStart(2, '0')}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wider text-emerald-300">Secs</span>
+                  <span className="text-[10px] uppercase tracking-wider text-emerald-300">
+                    {t('status.seconds')}
+                  </span>
                 </div>
               </div>
             </div>
@@ -319,11 +379,16 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
             <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-800 dark:text-stone-200">
-              Today's Prayer Cycle Progress
+              {t('dash.todaySchedule')}
             </h3>
           </div>
           <span className="text-xs text-stone-500 dark:text-stone-400">
-            Current: <strong className="text-emerald-700 dark:text-emerald-400">{prayerData.currentPrayer?.name || 'Night / Tahajjud'}</strong>
+            {t('status.current')}:{' '}
+            <strong className="text-emerald-700 dark:text-emerald-400">
+              {prayerData.currentPrayer
+                ? getPrayerName(prayerData.currentPrayer.name).name
+                : getPrayerName('Tahajjud').name}
+            </strong>
           </span>
         </div>
 
@@ -368,7 +433,7 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
                         : 'text-stone-400 dark:text-stone-500'
                     }`}
                   >
-                    {prayer.name}
+                    {getPrayerName(prayer.name).name}
                   </span>
                   <span className="text-[11px] font-mono text-stone-500 dark:text-stone-400">
                     {prayer.time}
@@ -385,7 +450,7 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
-              Today's Prayer Times
+              {t('dash.todaySchedule')}
             </h3>
             <p className="text-xs text-stone-500 dark:text-stone-400">
               Calculated using {CALCULATION_METHOD_LABELS[settings.method]?.name} ({settings.madhab === 'hanafi' ? 'Hanafi' : 'Standard Asr'})
@@ -395,7 +460,7 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
             onClick={() => onNavigate('prayer-times')}
             className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 transition-colors cursor-pointer"
           >
-            <span>Full Timetable</span>
+            <span>{t('dash.monthlyTimetable')}</span>
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -406,6 +471,7 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
             const isNext = prayer.isNext;
             const isCurrent = prayer.isCurrent;
             const isPassed = prayer.isPassed;
+            const localizedPrayer = getPrayerName(prayer.name);
 
             return (
               <div
@@ -422,7 +488,7 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
               >
                 {isNext && (
                   <span className="absolute -top-2.5 left-3 px-2 py-0.5 rounded-md bg-amber-500 text-stone-900 text-[9px] font-black uppercase tracking-wider shadow-xs">
-                    Next Prayer
+                    {t('status.nextPrayer')}
                   </span>
                 )}
 
@@ -436,10 +502,10 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
                         : 'text-stone-800 dark:text-stone-200'
                     }`}
                   >
-                    {prayer.name}
+                    {localizedPrayer.name}
                   </span>
                   <span className="text-sm font-arabic font-bold text-stone-400 dark:text-stone-500">
-                    {prayer.arabicName}
+                    {localizedPrayer.arabic}
                   </span>
                 </div>
 
@@ -535,8 +601,8 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
               onClick={() => onNavigate('qibla')}
               className="w-full mt-2 py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
             >
-              <span>Open Qibla Compass</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>{t('dash.qiblaDirection')}</span>
+              <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
             </button>
           </div>
         </div>
@@ -548,22 +614,22 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
-              Special & Voluntary Prayers in {location.city}
+              {t('dash.specialPrayers')} — {location.city}
             </h3>
           </div>
-          <span className="text-xs text-stone-500">Calculated for today</span>
+          <span className="text-xs text-stone-500">{t('dash.specialPrayersSub')}</span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <button
             onClick={() => onNavigate('intent-ishraq')}
-            className="p-3.5 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-emerald-900/30 hover:border-emerald-500 text-left transition-all group cursor-pointer shadow-2xs"
+            className="p-3.5 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-emerald-900/30 hover:border-emerald-500 text-left rtl:text-right transition-all group cursor-pointer shadow-2xs"
           >
             <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 block mb-0.5">
-              Ishraq
+              {getPrayerName('Ishraq').name}
             </span>
             <span className="text-sm font-bold text-stone-900 dark:text-white block group-hover:text-emerald-600">
-              Post-Sunrise
+              {getPrayerName('Ishraq').arabic}
             </span>
             <span className="text-[11px] text-stone-400 mt-1 block">
               15-20 min after sunrise
@@ -572,13 +638,13 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
 
           <button
             onClick={() => onNavigate('intent-duha')}
-            className="p-3.5 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-emerald-900/30 hover:border-emerald-500 text-left transition-all group cursor-pointer shadow-2xs"
+            className="p-3.5 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-emerald-900/30 hover:border-emerald-500 text-left rtl:text-right transition-all group cursor-pointer shadow-2xs"
           >
             <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 block mb-0.5">
-              Duha (Chasht)
+              {getPrayerName('Duha').name}
             </span>
             <span className="text-sm font-bold text-stone-900 dark:text-white block group-hover:text-emerald-600">
-              Forenoon
+              {getPrayerName('Duha').arabic}
             </span>
             <span className="text-[11px] text-stone-400 mt-1 block">
               Mid-morning to Zawal
@@ -587,31 +653,31 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
 
           <button
             onClick={() => onNavigate('intent-tahajjud')}
-            className="p-3.5 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-emerald-900/30 hover:border-emerald-500 text-left transition-all group cursor-pointer shadow-2xs"
+            className="p-3.5 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-emerald-900/30 hover:border-emerald-500 text-left rtl:text-right transition-all group cursor-pointer shadow-2xs"
           >
             <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 block mb-0.5">
-              Tahajjud
+              {getPrayerName('Tahajjud').name}
             </span>
             <span className="text-sm font-bold text-stone-900 dark:text-white block group-hover:text-emerald-600">
               {prayerData.qiyamTime || '03:30 AM'}
             </span>
             <span className="text-[11px] text-stone-400 mt-1 block">
-              Last third of night
+              {getPrayerName('Tahajjud').arabic} · Last third of night
             </span>
           </button>
 
           <button
             onClick={() => onNavigate('intent-awabeen')}
-            className="p-3.5 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-emerald-900/30 hover:border-emerald-500 text-left transition-all group cursor-pointer shadow-2xs"
+            className="p-3.5 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-emerald-900/30 hover:border-emerald-500 text-left rtl:text-right transition-all group cursor-pointer shadow-2xs"
           >
             <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 block mb-0.5">
-              Awabeen
+              {getPrayerName('Awabeen').name}
             </span>
             <span className="text-sm font-bold text-stone-900 dark:text-white block group-hover:text-emerald-600">
-              Post-Maghrib
+              {getPrayerName('Awabeen').arabic}
             </span>
             <span className="text-[11px] text-stone-400 mt-1 block">
-              6 rak'ahs of return
+              Post-Maghrib · 6 rak'ahs
             </span>
           </button>
         </div>

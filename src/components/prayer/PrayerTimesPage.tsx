@@ -21,6 +21,7 @@ import {
   getHijriDate,
   CALCULATION_METHOD_LABELS,
 } from '../../services/prayerTimes';
+import { useLanguage } from '../../services/i18n';
 
 interface PrayerTimesPageProps {
   location: LocationData;
@@ -37,6 +38,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
   onOpenSettingsModal,
   onNavigate,
 }) => {
+  const { t, getPrayerName, language } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<'daily' | 'monthly'>('daily');
 
@@ -52,7 +54,10 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
     settings
   );
 
-  const monthName = selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const monthName = selectedDate.toLocaleDateString(language === 'en' ? 'en-US' : language, {
+    month: 'long',
+    year: 'numeric',
+  });
 
   const handlePrevDay = () => {
     const prev = new Date(selectedDate);
@@ -118,10 +123,10 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
           <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mb-1">
             <button onClick={() => onNavigate('home')} className="hover:underline">Home</button>
             <span>/</span>
-            <span className="text-emerald-700 dark:text-emerald-400 font-medium">Prayer Times</span>
+            <span className="text-emerald-700 dark:text-emerald-400 font-medium">{t('nav.prayerTimes')}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-stone-900 dark:text-stone-100">
-            Prayer Times in {location.city}
+            {t('page.prayerTimes')} — {location.city}
           </h1>
           <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400">
             Accurate astronomical calculations for {location.region || location.city}, {location.country} ({location.timezone})
@@ -135,7 +140,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-[#121c19] text-xs font-semibold text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-emerald-900/30 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
           >
             <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>Change City</span>
+            <span>{t('dash.changeLocation')}</span>
           </button>
 
           <button
@@ -143,7 +148,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-[#121c19] text-xs font-semibold text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-emerald-900/30 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
           >
             <Sliders className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>Method Settings</span>
+            <span>{t('dash.settings')}</span>
           </button>
 
           {/* Daily vs Monthly Switcher */}
@@ -156,7 +161,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                   : 'text-stone-600 dark:text-stone-400'
               }`}
             >
-              Daily
+              {t('page.daily')}
             </button>
             <button
               onClick={() => setViewMode('monthly')}
@@ -166,7 +171,7 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                   : 'text-stone-600 dark:text-stone-400'
               }`}
             >
-              Monthly
+              {t('page.monthly')}
             </button>
           </div>
         </div>
@@ -181,13 +186,13 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
               onClick={handlePrevDay}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white dark:bg-[#152320] text-xs font-semibold text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800 hover:bg-stone-50 transition-colors cursor-pointer"
             >
-              <ChevronLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Previous Day</span>
+              <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
+              <span className="hidden sm:inline">Prev</span>
             </button>
 
             <div className="text-center">
               <div className="text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100">
-                {selectedDate.toLocaleDateString('en-US', {
+                {selectedDate.toLocaleDateString(language === 'en' ? 'en-US' : language, {
                   weekday: 'long',
                   month: 'short',
                   day: 'numeric',
@@ -204,73 +209,76 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                 onClick={handleToday}
                 className="px-2.5 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-xs font-bold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-200 transition-colors cursor-pointer"
               >
-                Today
+                {t('page.today')}
               </button>
               <button
                 onClick={handleNextDay}
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white dark:bg-[#152320] text-xs font-semibold text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800 hover:bg-stone-50 transition-colors cursor-pointer"
               >
-                <span className="hidden sm:inline">Next Day</span>
-                <ChevronRight className="w-4 h-4" />
+                <span className="hidden sm:inline">Next</span>
+                <ChevronRight className="w-4 h-4 rtl:rotate-180" />
               </button>
             </div>
           </div>
 
           {/* Full Daily Timetable Detailed Table */}
           <div className="overflow-hidden rounded-2xl border border-stone-200 dark:border-emerald-950 bg-white dark:bg-[#101a17] shadow-sm">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left rtl:text-right text-sm">
               <thead className="bg-[#f5f2ea] dark:bg-[#0c1412] text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400 border-b border-stone-200 dark:border-stone-800">
                 <tr>
-                  <th className="py-3.5 px-4 font-bold">Prayer</th>
-                  <th className="py-3.5 px-4 font-bold text-right sm:text-left">Arabic</th>
-                  <th className="py-3.5 px-4 font-bold">Time</th>
-                  <th className="hidden sm:table-cell py-3.5 px-4 font-bold">Status</th>
+                  <th className="py-3.5 px-4 font-bold">{t('table.prayer')}</th>
+                  <th className="py-3.5 px-4 font-bold text-right sm:text-left rtl:text-left rtl:sm:text-right">{t('table.arabic')}</th>
+                  <th className="py-3.5 px-4 font-bold">{t('table.time')}</th>
+                  <th className="hidden sm:table-cell py-3.5 px-4 font-bold">{t('table.status')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100 dark:divide-stone-800/80">
-                {dayPrayers.prayers.map((prayer) => (
-                  <tr
-                    key={prayer.name}
-                    className={`transition-colors ${
-                      prayer.isNext
-                        ? 'bg-amber-50/80 dark:bg-amber-950/30 font-semibold'
-                        : prayer.isCurrent
-                        ? 'bg-emerald-50/80 dark:bg-emerald-950/30 font-semibold'
-                        : 'hover:bg-stone-50/80 dark:hover:bg-stone-800/30'
-                    }`}
-                  >
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-stone-900 dark:text-stone-100">
-                          {prayer.name}
-                        </span>
-                        {prayer.isNext && (
-                          <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500 text-stone-900">
-                            Next
+                {dayPrayers.prayers.map((prayer) => {
+                  const localized = getPrayerName(prayer.name);
+                  return (
+                    <tr
+                      key={prayer.name}
+                      className={`transition-colors ${
+                        prayer.isNext
+                          ? 'bg-amber-50/80 dark:bg-amber-950/30 font-semibold'
+                          : prayer.isCurrent
+                          ? 'bg-emerald-50/80 dark:bg-emerald-950/30 font-semibold'
+                          : 'hover:bg-stone-50/80 dark:hover:bg-stone-800/30'
+                      }`}
+                    >
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-stone-900 dark:text-stone-100">
+                            {localized.name}
                           </span>
+                          {prayer.isNext && (
+                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500 text-stone-900">
+                              {t('status.nextPrayer')}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs text-stone-400 dark:text-stone-500">
+                          {prayer.meaning}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-right sm:text-left rtl:text-left rtl:sm:text-right font-arabic text-lg font-bold text-emerald-800 dark:text-emerald-400">
+                        {localized.arabic}
+                      </td>
+                      <td className="py-4 px-4 font-mono font-bold text-base text-stone-900 dark:text-stone-100">
+                        {prayer.time}
+                      </td>
+                      <td className="hidden sm:table-cell py-4 px-4 text-xs">
+                        {prayer.isPassed ? (
+                          <span className="text-stone-400 dark:text-stone-500">{t('status.passed')}</span>
+                        ) : prayer.isCurrent ? (
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold">{t('status.current')}</span>
+                        ) : (
+                          <span className="text-stone-600 dark:text-stone-300">{t('status.upcoming')}</span>
                         )}
-                      </div>
-                      <span className="text-xs text-stone-400 dark:text-stone-500">
-                        {prayer.meaning}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4 text-right sm:text-left font-arabic text-lg font-bold text-emerald-800 dark:text-emerald-400">
-                      {prayer.arabicName}
-                    </td>
-                    <td className="py-4 px-4 font-mono font-bold text-base text-stone-900 dark:text-stone-100">
-                      {prayer.time}
-                    </td>
-                    <td className="hidden sm:table-cell py-4 px-4 text-xs">
-                      {prayer.isPassed ? (
-                        <span className="text-stone-400 dark:text-stone-500">Completed</span>
-                      ) : prayer.isCurrent ? (
-                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">In Progress</span>
-                      ) : (
-                        <span className="text-stone-600 dark:text-stone-300">Upcoming</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -337,32 +345,32 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-[#152320] text-xs font-semibold text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800 hover:bg-stone-50 transition-colors cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5 text-stone-500" />
-                <span>Print Schedule</span>
+                <span>{t('ram.print')}</span>
               </button>
               <button
                 onClick={handleExportCSV}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Export CSV</span>
+                <span>{t('ram.download')}</span>
               </button>
             </div>
           </div>
 
           {/* Full Monthly Timetable */}
           <div className="overflow-x-auto rounded-2xl border border-stone-200 dark:border-emerald-950 bg-white dark:bg-[#101a17] shadow-sm">
-            <table className="w-full text-left text-xs whitespace-nowrap">
+            <table className="w-full text-left rtl:text-right text-xs whitespace-nowrap">
               <thead className="bg-[#f5f2ea] dark:bg-[#0c1412] uppercase tracking-wider text-stone-600 dark:text-stone-400 border-b border-stone-200 dark:border-stone-800 font-bold">
                 <tr>
-                  <th className="py-3 px-3">Day</th>
-                  <th className="py-3 px-3">Date</th>
-                  <th className="py-3 px-3">Hijri</th>
-                  <th className="py-3 px-3">Fajr</th>
-                  <th className="py-3 px-3">Sunrise</th>
-                  <th className="py-3 px-3">Dhuhr</th>
-                  <th className="py-3 px-3">Asr</th>
-                  <th className="py-3 px-3">Maghrib</th>
-                  <th className="py-3 px-3">Isha</th>
+                  <th className="py-3 px-3">#</th>
+                  <th className="py-3 px-3">{t('cal.gregorian')}</th>
+                  <th className="py-3 px-3">{t('cal.hijri')}</th>
+                  <th className="py-3 px-3">{getPrayerName('Fajr').name}</th>
+                  <th className="py-3 px-3">{getPrayerName('Sunrise').name}</th>
+                  <th className="py-3 px-3">{getPrayerName('Dhuhr').name}</th>
+                  <th className="py-3 px-3">{getPrayerName('Asr').name}</th>
+                  <th className="py-3 px-3">{getPrayerName('Maghrib').name}</th>
+                  <th className="py-3 px-3">{getPrayerName('Isha').name}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100 dark:divide-stone-800/80 font-mono">

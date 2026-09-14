@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   html {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -8,8 +10,26 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  .font-arabic {
-    font-family: 'Amiri', 'Traditional Arabic', serif;
+  body {
+    background-color: #faf8f5;
+    color: #1c1917;
+    min-height: 100vh;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .dark body {
+    background-color: #0c1412;
+    color: #f5f5f4;
+  }
+
+  [dir="rtl"] {
+    text-align: start;
+  }
+
+  .font-arabic,
+  [lang="ar"],
+  [lang="ur"] {
+    font-family: 'Amiri', 'Traditional Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, serif;
   }
 }
 

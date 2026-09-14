@@ -14,6 +14,7 @@ import {
   getMajorIslamicEvents,
   calculateDailyPrayers,
 } from '../../services/prayerTimes';
+import { useLanguage } from '../../services/i18n';
 
 interface IslamicCalendarViewProps {
   location: LocationData;
@@ -26,6 +27,7 @@ export const IslamicCalendarView: React.FC<IslamicCalendarViewProps> = ({
   settings,
   onNavigate,
 }) => {
+  const { t, getPrayerName, language } = useLanguage();
   const [currentDisplayDate, setCurrentDisplayDate] = useState<Date>(new Date());
   const [selectedDay, setSelectedDay] = useState<Date | null>(new Date());
 
@@ -45,7 +47,7 @@ export const IslamicCalendarView: React.FC<IslamicCalendarViewProps> = ({
     setSelectedDay(new Date());
   };
 
-  const monthName = currentDisplayDate.toLocaleDateString('en-US', {
+  const monthName = currentDisplayDate.toLocaleDateString(language === 'en' ? 'en-US' : language, {
     month: 'long',
     year: 'numeric',
   });
@@ -81,13 +83,13 @@ export const IslamicCalendarView: React.FC<IslamicCalendarViewProps> = ({
           <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mb-1">
             <button onClick={() => onNavigate('home')} className="hover:underline">Home</button>
             <span>/</span>
-            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Islamic Calendar</span>
+            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">{t('nav.calendar')}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-stone-900 dark:text-stone-50">
-            Islamic Lunar & Gregorian Calendar
+            {t('cal.title')}
           </h1>
           <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 mt-0.5">
-            View Hijri dates, upcoming Islamic holy days, and prayer schedules for {location.city}.
+            {location.city}, {location.country} — {t('cal.gregorian')} & {t('cal.hijri')}
           </p>
         </div>
 
@@ -104,7 +106,7 @@ export const IslamicCalendarView: React.FC<IslamicCalendarViewProps> = ({
             onClick={handleCurrentMonth}
             className="px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-200 transition-colors cursor-pointer"
           >
-            Today
+            {t('page.today')}
           </button>
           <button
             onClick={handleNextMonth}
@@ -124,20 +126,20 @@ export const IslamicCalendarView: React.FC<IslamicCalendarViewProps> = ({
               {monthName}
             </h2>
             <span className="text-xs text-stone-500 dark:text-stone-400">
-              Tap any date to inspect prayer schedule
+              {t('cal.hijri')} / {t('cal.gregorian')}
             </span>
           </div>
 
           <div className="rounded-2xl border border-stone-200 dark:border-emerald-950/80 bg-white dark:bg-[#101a17] shadow-sm overflow-hidden">
             {/* Weekday headers */}
             <div className="grid grid-cols-7 bg-[#f5f2ea] dark:bg-[#0c1412] text-center text-xs font-bold text-stone-600 dark:text-stone-400 border-b border-stone-200 dark:border-stone-800 py-3">
-              <span>Sun</span>
-              <span>Mon</span>
-              <span>Tue</span>
-              <span>Wed</span>
-              <span>Thu</span>
-              <span className="text-emerald-700 dark:text-emerald-400">Fri</span>
-              <span>Sat</span>
+              <span>{new Date(2026, 2, 1).toLocaleDateString(language === 'en' ? 'en-US' : language, { weekday: 'short' })}</span>
+              <span>{new Date(2026, 2, 2).toLocaleDateString(language === 'en' ? 'en-US' : language, { weekday: 'short' })}</span>
+              <span>{new Date(2026, 2, 3).toLocaleDateString(language === 'en' ? 'en-US' : language, { weekday: 'short' })}</span>
+              <span>{new Date(2026, 2, 4).toLocaleDateString(language === 'en' ? 'en-US' : language, { weekday: 'short' })}</span>
+              <span>{new Date(2026, 2, 5).toLocaleDateString(language === 'en' ? 'en-US' : language, { weekday: 'short' })}</span>
+              <span className="text-emerald-700 dark:text-emerald-400">{new Date(2026, 2, 6).toLocaleDateString(language === 'en' ? 'en-US' : language, { weekday: 'short' })}</span>
+              <span>{new Date(2026, 2, 7).toLocaleDateString(language === 'en' ? 'en-US' : language, { weekday: 'short' })}</span>
             </div>
 
             {/* Days grid */}
@@ -215,10 +217,10 @@ export const IslamicCalendarView: React.FC<IslamicCalendarViewProps> = ({
             <div className="rounded-3xl bg-[#f7f5f0] dark:bg-[#121c19] p-5 border border-stone-200 dark:border-emerald-950 space-y-4 shadow-sm">
               <div className="border-b border-stone-200 dark:border-stone-800 pb-3">
                 <span className="text-[10px] uppercase tracking-wider font-bold text-stone-500 dark:text-stone-400 block">
-                  Schedule Details
+                  {t('cal.gregorian')} & {t('cal.hijri')}
                 </span>
                 <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">
-                  {selectedDay.toLocaleDateString('en-US', {
+                  {selectedDay.toLocaleDateString(language === 'en' ? 'en-US' : language, {
                     weekday: 'short',
                     month: 'short',
                     day: 'numeric',
@@ -232,19 +234,27 @@ export const IslamicCalendarView: React.FC<IslamicCalendarViewProps> = ({
 
               {/* Prayer list for selected date */}
               <div className="space-y-2">
-                {selectedPrayers.prayers.map((prayer) => (
-                  <div
-                    key={prayer.name}
-                    className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-xl bg-white dark:bg-[#172521] border border-stone-200/60 dark:border-stone-800"
-                  >
-                    <span className="font-semibold text-stone-700 dark:text-stone-300">
-                      {prayer.name}
-                    </span>
-                    <span className="font-mono font-bold text-stone-900 dark:text-stone-100">
-                      {prayer.time}
-                    </span>
-                  </div>
-                ))}
+                {selectedPrayers.prayers.map((prayer) => {
+                  const localized = getPrayerName(prayer.name);
+                  return (
+                    <div
+                      key={prayer.name}
+                      className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-xl bg-white dark:bg-[#172521] border border-stone-200/60 dark:border-stone-800"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold text-stone-700 dark:text-stone-300">
+                          {localized.name}
+                        </span>
+                        <span className="text-[10px] font-arabic text-emerald-700 dark:text-emerald-400">
+                          {localized.arabic}
+                        </span>
+                      </div>
+                      <span className="font-mono font-bold text-stone-900 dark:text-stone-100">
+                        {prayer.time}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -254,7 +264,7 @@ export const IslamicCalendarView: React.FC<IslamicCalendarViewProps> = ({
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-500" />
               <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
-                Major Islamic Days (1448 AH)
+                {t('cal.events')}
               </h3>
             </div>
 

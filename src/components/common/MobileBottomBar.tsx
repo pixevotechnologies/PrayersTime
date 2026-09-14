@@ -1,5 +1,6 @@
 import React from 'react';
 import { Home, Clock, Compass, Calendar, Wrench } from 'lucide-react';
+import { useLanguage } from '../../services/i18n';
 
 interface MobileBottomBarProps {
   currentRoute: string;
@@ -7,12 +8,14 @@ interface MobileBottomBarProps {
 }
 
 export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({ currentRoute, onNavigate }) => {
+  const { t } = useLanguage();
+
   const tabs = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'prayer-times', label: 'Prayers', icon: Clock },
-    { id: 'qibla', label: 'Qibla', icon: Compass },
-    { id: 'islamic-calendar', label: 'Calendar', icon: Calendar },
-    { id: 'tools', label: 'Tools', icon: Wrench },
+    { id: 'home', label: t('nav.dashboard'), icon: Home },
+    { id: 'prayer-times', label: t('nav.prayerTimes'), icon: Clock },
+    { id: 'qibla', label: t('nav.qibla'), icon: Compass },
+    { id: 'islamic-calendar', label: t('nav.calendar'), icon: Calendar },
+    { id: 'tools', label: t('nav.tools'), icon: Wrench },
   ];
 
   return (

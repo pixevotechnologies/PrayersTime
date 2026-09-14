@@ -588,3 +588,152 @@ export function getCityBySlug(slug: string): EnrichedCity | undefined {
       c.city.toLowerCase().replace(/\s+/g, '-') === s
   );
 }
+
+export const FAVORITES_STORAGE_KEY = 'prayerstime_favorite_locations';
+
+export const DEFAULT_FAVORITES: LocationData[] = [
+  POPULAR_CITIES[0], // Makkah
+  POPULAR_CITIES[1], // Madinah
+  POPULAR_CITIES[5], // Jerusalem / Al-Quds
+];
+
+/**
+ * Retrieve user's saved favorite locations from localStorage.
+ * Defaults to the three Holy Sanctuaries (Makkah, Madinah, Jerusalem) if not customized.
+ */
+export function getFavoriteLocations(): LocationData[] {
+  if (typeof window === 'undefined') return DEFAULT_FAVORITES;
+  try {
+    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to load favorite locations from storage:', err);
+  }
+  return DEFAULT_FAVORITES;
+}
+
+/**
+ * Persist favorite locations list to localStorage.
+ */
+export function saveFavoriteLocations(favorites: LocationData[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+  } catch (err) {
+    console.warn('Failed to save favorite locations to storage:', err);
+  }
+}
+
+/**
+ * Checks if a location is in the favorites list based on city name and country.
+ */
+export function isLocationFavorite(
+  loc: LocationData,
+  favorites: LocationData[]
+): boolean {
+  if (!loc || !favorites) return false;
+  const targetCity = loc.city.trim().toLowerCase();
+  const targetCountry = (loc.country || '').trim().toLowerCase();
+  const targetCode = (loc.countryCode || '').trim().toLowerCase();
+
+  return favorites.some((fav) => {
+    const fCity = fav.city.trim().toLowerCase();
+    const fCountry = (fav.country || '').trim().toLowerCase();
+    const fCode = (fav.countryCode || '').trim().toLowerCase();
+
+    // Check exact city match plus country or country code match
+    if (fCity === targetCity) {
+      if (targetCode && fCode && targetCode === fCode) return true;
+      if (targetCountry && fCountry && targetCountry === fCountry) return true;
+      // Also match if coords are extremely close (< 0.05 degrees)
+      if (
+        Math.abs(fav.latitude - loc.latitude) < 0.05 &&
+        Math.abs(fav.longitude - loc.longitude) < 0.05
+      ) {
+        return true;
+      }
+    }
+    return false;
+  });
+}
+
+/**
+ * Toggles a location in the favorites list (adds if not present, removes if present)
+ * and returns the updated array, persisting to localStorage.
+ */
+export function toggleFavoriteLocation(
+  loc: LocationData,
+  currentFavorites: LocationData[]
+): LocationData[] {
+  const isFav = isLocationFavorite(loc, currentFavorites);
+  let updated: LocationData[];
+
+  if (isFav) {
+    const targetCity = loc.city.trim().toLowerCase();
+    const targetCode = (loc.countryCode || '').trim().toLowerCase();
+    const targetCountry = (loc.country || '').trim().toLowerCase();
+
+    updated = currentFavorites.filter((fav) => {
+      const fCity = fav.city.trim().toLowerCase();
+      const fCode = (fav.countryCode || '').trim().toLowerCase();
+      const fCountry = (fav.country || '').trim().toLowerCase();
+
+      if (fCity === targetCity) {
+        if (targetCode && fCode && targetCode === fCode) return false;
+        if (targetCountry && fCountry && targetCountry === fCountry) return false;
+        if (
+          Math.abs(fav.latitude - loc.latitude) < 0.05 &&
+          Math.abs(fav.longitude - loc.longitude) < 0.05
+        ) {
+          return false;
+        }
+      }
+      return true;
+    });
+  } else {
+    // Add clean copy of location to favorites
+    const newFav: LocationData = {
+      city: loc.city,
+      country: loc.country,
+      countryCode: loc.countryCode,
+      region: loc.region,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      timezone: loc.timezone,
+      isAutoDetected: false,
+    };
+    updated = [newFav, ...currentFavorites];
+  }
+
+  saveFavoriteLocations(updated);
+  return updated;
+}
+
+/**
+ * Removes a location from favorites and persists to localStorage.
+ */
+export function removeFavoriteLocation(
+  loc: LocationData,
+  currentFavorites: LocationData[]
+): LocationData[] {
+  const targetCity = loc.city.trim().toLowerCase();
+  const updated = currentFavorites.filter(
+    (fav) => fav.city.trim().toLowerCase() !== targetCity
+  );
+  saveFavoriteLocations(updated);
+  return updated;
+}
+
+/**
+ * Resets favorites back to the default holy sanctuaries.
+ */
+export function resetFavoriteLocations(): LocationData[] {
+  saveFavoriteLocations(DEFAULT_FAVORITES);
+  return DEFAULT_FAVORITES;
+}
+

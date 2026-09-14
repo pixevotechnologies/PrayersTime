@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { soundService } from '../../services/soundService';
 import { DailyDhikr } from './DailyDhikr';
+import { useLanguage } from '../../services/i18n';
 
 interface ToolsHubProps {
   initialSubTab?: string;
@@ -24,6 +25,7 @@ export const ToolsHub: React.FC<ToolsHubProps> = ({
   initialSubTab = 'dhikr',
   onNavigate,
 }) => {
+  const { t } = useLanguage();
   const normalizeTab = (tab: string) => {
     const clean = tab.startsWith('tools-') ? tab.replace('tools-', '') : tab;
     if (clean === 'daily-dhikr' || clean === 'tools' || clean === '') return 'dhikr';
@@ -160,12 +162,12 @@ export const ToolsHub: React.FC<ToolsHubProps> = ({
       {/* Top Header */}
       <div className="text-center space-y-2">
         <div className="flex items-center justify-center gap-2 text-xs text-stone-500 dark:text-stone-400">
-          <button onClick={() => onNavigate('home')} className="hover:underline">Home</button>
+          <button onClick={() => onNavigate('home')} className="hover:underline cursor-pointer">{t('nav.home')}</button>
           <span>/</span>
-          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Islamic Daily Tools</span>
+          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">{t('nav.tools')}</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-stone-900 dark:text-stone-50">
-          Islamic Daily Tools Ecosystem
+          {t('nav.tools')}
         </h1>
         <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 max-w-lg mx-auto">
           Thoughtfully built, accurate spiritual utilities to accompany your daily life.
@@ -184,7 +186,7 @@ export const ToolsHub: React.FC<ToolsHubProps> = ({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Daily Dhikr & Tracker</span>
+            <span>{t('tools.dhikr')}</span>
           </button>
           <button
             onClick={() => setActiveTab('tasbih')}
@@ -194,7 +196,7 @@ export const ToolsHub: React.FC<ToolsHubProps> = ({
                 : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
             }`}
           >
-            Digital Tasbih
+            {t('tools.tasbih')}
           </button>
           <button
             onClick={() => setActiveTab('zakat')}
@@ -204,7 +206,7 @@ export const ToolsHub: React.FC<ToolsHubProps> = ({
                 : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
             }`}
           >
-            Zakat Calculator
+            {t('tools.zakat')}
           </button>
           <button
             onClick={() => setActiveTab('athkar')}
@@ -214,7 +216,7 @@ export const ToolsHub: React.FC<ToolsHubProps> = ({
                 : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
             }`}
           >
-            Daily Athkar
+            {t('tools.athkar')}
           </button>
           <button
             onClick={() => setActiveTab('converter')}
@@ -224,7 +226,7 @@ export const ToolsHub: React.FC<ToolsHubProps> = ({
                 : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
             }`}
           >
-            Date Converter
+            {t('tools.converter')}
           </button>
         </div>
       </div>

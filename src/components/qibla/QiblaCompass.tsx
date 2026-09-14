@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import {
   Compass as CompassIcon,
-  RotateCcw,
   Navigation,
   Info,
   ShieldCheck,
-  AlertCircle,
   MapPin,
-  Sparkles,
 } from 'lucide-react';
 import { LocationData } from '../../types';
 import { getQiblaInfo } from '../../services/prayerTimes';
 import { useDeviceOrientation } from '../../hooks/useDeviceOrientation';
+import { useLanguage } from '../../services/i18n';
 
 interface QiblaCompassProps {
   location: LocationData;
@@ -24,8 +22,9 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
   onOpenLocationModal,
   onNavigate,
 }) => {
+  const { t } = useLanguage();
   const qibla = getQiblaInfo(location.latitude, location.longitude);
-  const { heading, isSupported, permissionState, isCalibrated, errorMsg, requestSensorPermission } =
+  const { heading, isSupported, permissionState, requestSensorPermission } =
     useDeviceOrientation();
 
   // Manual rotation fallback for desktop or when sensor is unsupported
@@ -36,8 +35,6 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
   const activeHeading = heading !== null ? heading : manualHeading;
 
   // The angle between current device heading and Qibla bearing
-  // E.g. if device points North (0°), and Qibla is 120°, needle is at 120°
-  // If device rotates to 120°, Qibla needle is at 0° (straight ahead!)
   const relativeQiblaAngle = (qibla.bearing - activeHeading + 360) % 360;
   const isAligned = Math.abs(relativeQiblaAngle) < 4 || Math.abs(relativeQiblaAngle - 360) < 4;
 
@@ -48,13 +45,13 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
         <div className="flex items-center justify-center gap-2 text-xs text-stone-500 dark:text-stone-400">
           <button onClick={() => onNavigate('home')} className="hover:underline">Home</button>
           <span>/</span>
-          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Qibla Direction</span>
+          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">{t('nav.qibla')}</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-stone-900 dark:text-stone-50">
-          Qibla Compass & Direction
+          {t('qibla.title')}
         </h1>
         <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 max-w-lg mx-auto">
-          Direct geographical bearing to the Holy Kaaba in Makkah al-Mukarramah from {location.city}, {location.country}.
+          {location.city}, {location.country} — {qibla.bearing}° ({qibla.cardinal})
         </p>
       </div>
 
@@ -102,13 +99,13 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
           {isAligned ? (
             <>
               <ShieldCheck className="w-4 h-4 text-amber-300" />
-              <span>Facing Qibla Directly!</span>
+              <span>{t('qibla.facingKaaba')}</span>
             </>
           ) : (
             <>
               <Navigation className="w-3.5 h-3.5 text-stone-400" />
               <span>
-                Turn device until needle points to top (0°)
+                {t('qibla.turnDevice')}
               </span>
             </>
           )}
@@ -176,7 +173,7 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
         <div className="grid grid-cols-3 gap-3 sm:gap-6 w-full max-w-md pt-2">
           <div className="p-3 rounded-2xl bg-[#f5f2ea] dark:bg-[#131f1c] border border-stone-200 dark:border-emerald-950">
             <span className="text-[10px] uppercase font-bold text-stone-500 dark:text-stone-400 block">
-              Qibla Bearing
+              {t('qibla.bearing')}
             </span>
             <span className="text-lg sm:text-xl font-black font-mono text-emerald-800 dark:text-emerald-400">
               {qibla.bearing}°
@@ -192,7 +189,7 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
           </div>
           <div className="p-3 rounded-2xl bg-[#f5f2ea] dark:bg-[#131f1c] border border-stone-200 dark:border-emerald-950">
             <span className="text-[10px] uppercase font-bold text-stone-500 dark:text-stone-400 block">
-              Kaaba Distance
+              {t('qibla.distance')}
             </span>
             <span className="text-lg sm:text-xl font-black font-mono text-stone-900 dark:text-stone-100">
               {qibla.distanceKm.toLocaleString()} <span className="text-xs font-normal">km</span>
@@ -204,7 +201,7 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
         {(!heading || heading === 0) && (
           <div className="w-full max-w-sm pt-2 space-y-1.5 text-left">
             <div className="flex items-center justify-between text-xs text-stone-500">
-              <span>Manual Heading Adjustment (Desktop / Test):</span>
+              <span>Manual Heading (Desktop):</span>
               <span className="font-mono font-bold">{manualHeading}°</span>
             </div>
             <input
@@ -247,14 +244,14 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-emerald-600" />
           <span>
-            Current Location: <strong>{location.city}, {location.country}</strong> ({location.latitude.toFixed(4)}° N, {location.longitude.toFixed(4)}° E)
+            {location.city}, {location.country} ({location.latitude.toFixed(4)}° N, {location.longitude.toFixed(4)}° E)
           </span>
         </div>
         <button
           onClick={onOpenLocationModal}
           className="text-emerald-700 dark:text-emerald-400 font-bold hover:underline cursor-pointer"
         >
-          Switch City
+          {t('dash.changeLocation')}
         </button>
       </div>
     </div>
