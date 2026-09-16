@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -11,6 +11,7 @@ import {
   Sparkles,
   Database,
 } from 'lucide-react';
+import { updateSeoTags } from '../../services/seoManager';
 import {
   AppSettings,
   LocationData,
@@ -44,6 +45,18 @@ export const PrayerTimesPage: React.FC<PrayerTimesPageProps> = ({
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<'daily' | 'monthly'>('daily');
   const { status: cacheStatus } = usePrayerCache(location, settings);
+
+  useEffect(() => {
+    updateSeoTags({
+      title: `Prayer Times Today & Monthly Timetable — ${location.city} | Prayerstime`,
+      description: `Accurate daily prayer times and monthly timetable for ${location.city}, ${location.country}. Includes Fajr, Sunrise, Dhuhr, Asr, Maghrib, and Isha with astronomical precision.`,
+      canonicalPath: '/prayer-times',
+      breadcrumbs: [
+        { name: 'Home', path: '/' },
+        { name: 'Prayer Times', path: '/prayer-times' },
+      ],
+    });
+  }, [location.city, location.country]);
 
   // Daily prayer calculations for selected date
   const dayPrayers = calculateDailyPrayers(location, selectedDate, settings);

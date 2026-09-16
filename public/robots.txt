@@ -16,9 +16,12 @@ Allow: /qibla
 Allow: /islamic-calendar
 Allow: /ramadan
 Allow: /tools
+Allow: /tools/daily-dhikr
+Allow: /tools/zakat-calculator
 Allow: /methodology
 Allow: /editorial-policy
 Allow: /about
+Allow: /contact
 Allow: /privacy
 Allow: /terms
 

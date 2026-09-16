@@ -6,6 +6,7 @@ import { OfflineIndicator } from './components/common/OfflineIndicator';
 import { PrayerDashboard } from './components/prayer/PrayerDashboard';
 import { PrayerTimesPage } from './components/prayer/PrayerTimesPage';
 import { CityPage } from './components/prayer/CityPage';
+import { MakkahPrayerPage } from './components/prayer/MakkahPrayerPage';
 import { SpecialPrayerPage } from './components/prayer/SpecialPrayerPage';
 import { MethodologyPage } from './components/legal/MethodologyPage';
 import { EditorialPolicyPage } from './components/legal/EditorialPolicyPage';
@@ -26,6 +27,14 @@ import { LanguageProvider, useLanguage } from './services/i18n';
 const CANONICAL_ROUTE_MAP: Record<string, string> = {
   '/': 'home',
   '/prayer-times': 'prayer-times',
+  '/prayer-times/makkah': 'city-makkah',
+  '/prayer-times/makkah/': 'city-makkah',
+  '/prayer-times/madinah': 'city-madinah',
+  '/prayer-times/madinah/': 'city-madinah',
+  '/prayer-times/jeddah': 'city-jeddah',
+  '/prayer-times/jeddah/': 'city-jeddah',
+  '/prayer-times/riyadh': 'city-riyadh',
+  '/prayer-times/riyadh/': 'city-riyadh',
   '/ishraq-prayer-time': 'intent-ishraq',
   '/duha-prayer-time': 'intent-duha',
   '/chasht-prayer-time': 'intent-chasht',
@@ -41,7 +50,9 @@ const CANONICAL_ROUTE_MAP: Record<string, string> = {
   '/ramadan': 'ramadan',
   '/tools': 'tools',
   '/tools/daily-dhikr': 'tools-dhikr',
+  '/tools/dhikr': 'tools-dhikr',
   '/tools/zakat-calculator': 'tools-zakat',
+  '/tools/zakat': 'tools-zakat',
   '/about': 'about',
   '/privacy': 'privacy',
   '/terms': 'terms',
@@ -100,9 +111,12 @@ function getUrlForRoute(route: string, city?: LocationData): string {
   if (route === 'prayer-times') return '/prayer-times';
 
   if (route.startsWith('city-')) {
-    const citySlug = route.replace('city-', '');
+    const citySlug = route.replace('city-', '').toLowerCase();
+    if (citySlug === 'makkah') {
+      return '/prayer-times/makkah/';
+    }
     const matched = GLOBAL_CITIES.find(
-      (c) => c.city.toLowerCase().replace(/\s+/g, '-') === citySlug.toLowerCase()
+      (c) => c.city.toLowerCase().replace(/\s+/g, '-') === citySlug
     );
     if (matched) {
       return `/prayer-times/${matched.country.toLowerCase().replace(/\s+/g, '-')}/${matched.city.toLowerCase().replace(/\s+/g, '-')}`;
@@ -118,10 +132,18 @@ function getUrlForRoute(route: string, city?: LocationData): string {
     }
   }
 
+  if (route === 'tools') return '/tools';
   if (route === 'tools-dhikr') return '/tools/daily-dhikr';
   if (route === 'tools-zakat') return '/tools/zakat-calculator';
+  if (route === 'qibla') return '/qibla';
+  if (route === 'islamic-calendar') return '/islamic-calendar';
+  if (route === 'ramadan') return '/ramadan';
   if (route === 'methodology') return '/methodology';
   if (route === 'editorial-policy') return '/editorial-policy';
+  if (route === 'about') return '/about';
+  if (route === 'privacy') return '/privacy';
+  if (route === 'terms') return '/terms';
+  if (route === 'contact') return '/contact';
 
   return `/${route}`;
 }
@@ -274,7 +296,19 @@ function AppContent() {
           />
         )}
 
-        {matchedCity && (
+        {currentRoute === 'city-makkah' && (
+          <MakkahPrayerPage
+            settings={settings}
+            language={language}
+            onSetAsCurrentLocation={(loc) => {
+              handleSelectLocation(loc);
+              navigateTo('home');
+            }}
+            onNavigate={navigateTo}
+          />
+        )}
+
+        {currentRoute !== 'city-makkah' && matchedCity && (
           <CityPage
             cityLocation={matchedCity}
             settings={settings}

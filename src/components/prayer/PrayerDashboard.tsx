@@ -543,6 +543,50 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
         </div>
       </section>
 
+      {/* 4.5 PROMINENT MAKKAH (MECCA) PRAYER TIMES HIGHLIGHT & SEO HUB */}
+      <section
+        aria-label="Prayer Times in Makkah"
+        className="rounded-3xl bg-linear-to-r from-emerald-900/10 via-emerald-800/5 to-amber-500/10 dark:from-[#11231d] dark:via-[#0e1c18] dark:to-[#171e16] p-5 sm:p-6 border border-emerald-500/30 shadow-2xs"
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1.5 max-w-xl">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
+                <Compass className="w-3 h-3" />
+                The Holy Sanctuary · Qibla of the World
+              </span>
+              <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">
+                Masjid al-Haram
+              </span>
+            </div>
+
+            <h3 className="text-lg sm:text-xl font-bold text-stone-900 dark:text-stone-100">
+              Live Prayer Timetable for Makkah al-Mukarramah
+            </h3>
+
+            <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
+              Synchronize with the Sacred Mosque in Makkah (Mecca). View today's Fajr, Dhuhr, Asr,
+              Maghrib, and Isha times, live next-prayer countdown, and monthly timetable calculated
+              according to the official Umm al-Qura University standard.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+            <a
+              href="/prayer-times/makkah/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('city-makkah');
+              }}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold shadow-sm transition-all group cursor-pointer"
+            >
+              <span>Prayer Times in Makkah</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform rtl:rotate-180" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* 5. "YOUR DAY WITH PRAYERSTIME" (Connected Daily Islamic Guidance) */}
       <section
         id="your-day-companion"
@@ -797,6 +841,152 @@ export const PrayerDashboard: React.FC<PrayerDashboardProps> = ({
               Nisab comparison and clear asset calculation.
             </p>
           </button>
+        </div>
+      </section>
+
+      {/* 7. HOLY CITIES & REGIONAL PRAYER HUBS */}
+      <section className="space-y-4 pt-4 border-t border-stone-200 dark:border-stone-800">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
+              Holy Sanctuaries & Major Prayer Hubs
+            </h3>
+            <p className="text-xs text-stone-500 dark:text-stone-400">
+              Live timetables and prayer countdowns for the sacred cities of Islam
+            </p>
+          </div>
+          <button
+            onClick={() => onNavigate('prayer-times')}
+            className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline cursor-pointer"
+          >
+            All Cities
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {/* Makkah - Primary Dedicated Landing */}
+          <a
+            href="/prayer-times/makkah/"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('city-makkah');
+            }}
+            className="p-4 rounded-2xl bg-white dark:bg-[#121c19] border-2 border-emerald-600 dark:border-emerald-500 hover:shadow-md transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                  Saudi Arabia
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
+                  Featured
+                </span>
+              </div>
+              <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 group-hover:text-emerald-600 transition-colors">
+                Prayer Times in Makkah
+              </h4>
+              <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                Masjid al-Haram · Official Umm al-Qura calendar
+              </p>
+            </div>
+            <div className="mt-4 pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+              <span>View Timetable & FAQs</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </a>
+
+          {/* Madinah - Architecture Ready */}
+          <a
+            href="/prayer-times/madinah/"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('city-madinah');
+            }}
+            className="p-4 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:shadow-md transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">
+                  Saudi Arabia
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300">
+                  Prophet's City
+                </span>
+              </div>
+              <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 group-hover:text-emerald-600 transition-colors">
+                Prayer Times in Madinah
+              </h4>
+              <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                Al-Masjid an-Nabawi · Holy Sanctuary
+              </p>
+            </div>
+            <div className="mt-4 pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-semibold text-stone-600 dark:text-stone-300 group-hover:text-emerald-600">
+              <span>View Prayer Times</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </a>
+
+          {/* Jeddah - Architecture Ready */}
+          <a
+            href="/prayer-times/jeddah/"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('city-jeddah');
+            }}
+            className="p-4 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:shadow-md transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">
+                  Saudi Arabia
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300">
+                  Pilgrim Gateway
+                </span>
+              </div>
+              <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 group-hover:text-emerald-600 transition-colors">
+                Prayer Times in Jeddah
+              </h4>
+              <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                Red Sea Port & Gateway to Makkah
+              </p>
+            </div>
+            <div className="mt-4 pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-semibold text-stone-600 dark:text-stone-300 group-hover:text-emerald-600">
+              <span>View Prayer Times</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </a>
+
+          {/* Riyadh - Architecture Ready */}
+          <a
+            href="/prayer-times/riyadh/"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('city-riyadh');
+            }}
+            className="p-4 rounded-2xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:shadow-md transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">
+                  Saudi Arabia
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300">
+                  Capital
+                </span>
+              </div>
+              <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 group-hover:text-emerald-600 transition-colors">
+                Prayer Times in Riyadh
+              </h4>
+              <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                Central Province & Official Timetable
+              </p>
+            </div>
+            <div className="mt-4 pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-semibold text-stone-600 dark:text-stone-300 group-hover:text-emerald-600">
+              <span>View Prayer Times</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </a>
         </div>
       </section>
     </div>

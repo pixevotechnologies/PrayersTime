@@ -15,6 +15,7 @@ import {
 import { soundService } from '../../services/soundService';
 import { DailyDhikr } from './DailyDhikr';
 import { useLanguage } from '../../services/i18n';
+import { updateSeoTags } from '../../services/seoManager';
 
 interface ToolsHubProps {
   initialSubTab?: string;
@@ -37,6 +38,42 @@ export const ToolsHub: React.FC<ToolsHubProps> = ({
   useEffect(() => {
     setActiveTab(normalizeTab(initialSubTab));
   }, [initialSubTab]);
+
+  useEffect(() => {
+    if (activeTab === 'zakat') {
+      updateSeoTags({
+        title: 'Zakat Calculator Online — Calculate Your Nisab & Zakat | Prayerstime',
+        description: 'Free, private Islamic Zakat calculator. Calculate Zakat on gold, silver, cash, savings, and investments with updated Nisab thresholds.',
+        canonicalPath: '/tools/zakat-calculator',
+        breadcrumbs: [
+          { name: 'Home', path: '/' },
+          { name: 'Tools', path: '/tools' },
+          { name: 'Zakat Calculator', path: '/tools/zakat-calculator' },
+        ],
+      });
+    } else if (activeTab === 'dhikr') {
+      updateSeoTags({
+        title: 'Daily Dhikr Counter & Morning/Evening Adhkar | Prayerstime',
+        description: 'Digital Tasbih and daily morning & evening Adhkar counter with Arabic text, transliteration, audio, and spiritual virtues.',
+        canonicalPath: '/tools/daily-dhikr',
+        breadcrumbs: [
+          { name: 'Home', path: '/' },
+          { name: 'Tools', path: '/tools' },
+          { name: 'Daily Dhikr', path: '/tools/daily-dhikr' },
+        ],
+      });
+    } else {
+      updateSeoTags({
+        title: 'Islamic Daily Tools — Dhikr Counter, Zakat Calculator | Prayerstime',
+        description: 'Essential, distraction-free Islamic daily tools including digital Tasbih counter, Zakat calculator, and Quranic resources.',
+        canonicalPath: '/tools',
+        breadcrumbs: [
+          { name: 'Home', path: '/' },
+          { name: 'Tools', path: '/tools' },
+        ],
+      });
+    }
+  }, [activeTab]);
 
   // ----------------------------------------------------
   // TOOL 1: ZAKAT CALCULATOR STATE

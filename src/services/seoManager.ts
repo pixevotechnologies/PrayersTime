@@ -40,8 +40,8 @@ export function updateSeoTags(config: SeoMetaConfig): void {
   metaDesc.setAttribute('content', description);
 
   // 4. Update Canonical
-  const cleanPath = canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`;
-  const canonicalUrl = `${BASE_URL}${cleanPath}`;
+  let cleanPath = canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`;
+  const canonicalUrl = cleanPath === '/' ? `${BASE_URL}/` : `${BASE_URL}${cleanPath}`;
 
   let canonicalLink = document.querySelector('link[rel="canonical"]');
   if (!canonicalLink) {
@@ -52,17 +52,20 @@ export function updateSeoTags(config: SeoMetaConfig): void {
   canonicalLink.setAttribute('href', canonicalUrl);
 
   // 5. Update Open Graph Tags
+  const ogImageUrl = `${BASE_URL}/pwa-512x512.png`;
   setMetaProperty('og:title', title);
   setMetaProperty('og:description', description);
   setMetaProperty('og:url', canonicalUrl);
   setMetaProperty('og:type', ogType);
   setMetaProperty('og:site_name', 'Prayerstime');
+  setMetaProperty('og:image', ogImageUrl);
   setMetaProperty('og:locale', getLocaleCode(language));
 
   // 6. Update Twitter Card Tags
   setMetaProperty('twitter:title', title);
   setMetaProperty('twitter:description', description);
   setMetaProperty('twitter:card', 'summary_large_image');
+  setMetaProperty('twitter:image', ogImageUrl);
 
   // 7. Update Hreflang Alternates
   updateHreflangTags(cleanPath);
@@ -148,9 +151,9 @@ function updateJsonLd(
     {
       '@type': 'WebSite',
       '@id': `${BASE_URL}/#website`,
-      url: BASE_URL,
+      url: `${BASE_URL}/`,
       name: 'Prayerstime',
-      description: 'Your Daily Guide to Prayer & Faith',
+      description: 'Check accurate prayer times today, next-prayer countdown, Qibla direction, Islamic calendar and useful daily Islamic tools with Prayerstime.',
       publisher: {
         '@id': `${BASE_URL}/#organization`,
       },
@@ -167,11 +170,37 @@ function updateJsonLd(
       '@type': 'Organization',
       '@id': `${BASE_URL}/#organization`,
       name: 'Prayerstime',
-      url: BASE_URL,
+      url: `${BASE_URL}/`,
       logo: `${BASE_URL}/icon.svg`,
-      sameAs: [],
       description:
-        'Independent global Islamic platform providing verified prayer times, astronomical sunrise/sunset calculations, Qibla compass, and Islamic daily tools.',
+        'Independent global Islamic platform providing verified prayer times, astronomical calculations, Qibla compass, and daily Islamic tools.',
+    },
+    {
+      '@type': 'WebApplication',
+      '@id': `${BASE_URL}/#webapp`,
+      name: 'Prayerstime',
+      url: `${BASE_URL}/`,
+      applicationCategory: 'LifestyleApplication',
+      operatingSystem: 'All',
+      isAccessibleForFree: true,
+      description:
+        'Check accurate prayer times today, next-prayer countdown, Qibla direction, Islamic calendar and useful daily Islamic tools with Prayerstime.',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+      featureList: [
+        'Accurate daily prayer times (Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha)',
+        'Live next-prayer countdown timer',
+        'Interactive monthly prayer timetable with print and CSV export',
+        'Real-time Qibla compass bearing to the Kaaba',
+        'Hijri Islamic calendar and key Islamic events',
+        'Ramadan timetable with Suhoor and Iftar countdown',
+        'Daily Dhikr and Tasbih counter',
+        'Zakat calculator for gold, silver, and savings',
+        'Offline PWA support with cached calculations',
+      ],
     },
   ];
 

@@ -1,6 +1,6 @@
 {
   "name": "Prayerstime",
-  "description": "Your Daily Guide to Prayer & Faith. Accurate prayer times, live next-prayer countdown, Qibla compass, Islamic calendar, and essential daily tools.",
+  "description": "Check accurate prayer times today, next-prayer countdown, Qibla direction, Islamic calendar and useful daily Islamic tools with Prayerstime.",
   "requestFramePermissions": [
     "geolocation"
   ],

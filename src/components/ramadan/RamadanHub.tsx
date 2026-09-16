@@ -16,6 +16,7 @@ import {
   calculateMonthlyTimetable,
   getHijriDate,
 } from '../../services/prayerTimes';
+import { updateSeoTags } from '../../services/seoManager';
 import { useLanguage } from '../../services/i18n';
 
 interface RamadanHubProps {
@@ -33,6 +34,18 @@ export const RamadanHub: React.FC<RamadanHubProps> = ({
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const todayPrayers = calculateDailyPrayers(location, currentDate, settings);
   const hijri = getHijriDate(currentDate, settings.hijriAdjustment);
+
+  useEffect(() => {
+    updateSeoTags({
+      title: `Ramadan Timetable Today — Sehri & Iftar Times in ${location.city} | Prayerstime`,
+      description: `Accurate daily Suhoor (Sehri) and Iftar prayer times in ${location.city}, ${location.country}. Live fasting countdown and full 30-day Ramadan timetable.`,
+      canonicalPath: '/ramadan',
+      breadcrumbs: [
+        { name: 'Home', path: '/' },
+        { name: 'Ramadan Timetable', path: '/ramadan' },
+      ],
+    });
+  }, [location.city, location.country]);
 
   // Live countdown to Iftar or Imsak
   const [targetType, setTargetType] = useState<'iftar' | 'imsak'>('iftar');

@@ -74,12 +74,12 @@ export const Header: React.FC<HeaderProps> = ({
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
   const navItems = [
-    { id: 'home', label: t('nav.dashboard'), icon: Clock },
-    { id: 'prayer-times', label: t('nav.prayerTimes'), icon: Clock },
-    { id: 'qibla', label: t('nav.qibla'), icon: Compass },
-    { id: 'islamic-calendar', label: t('nav.calendar'), icon: Calendar },
-    { id: 'ramadan', label: t('nav.ramadan'), icon: Sparkles },
-    { id: 'tools', label: t('nav.tools'), icon: Wrench },
+    { id: 'home', label: t('nav.dashboard'), icon: Clock, href: '/' },
+    { id: 'prayer-times', label: t('nav.prayerTimes'), icon: Clock, href: '/prayer-times' },
+    { id: 'qibla', label: t('nav.qibla'), icon: Compass, href: '/qibla' },
+    { id: 'islamic-calendar', label: t('nav.calendar'), icon: Calendar, href: '/islamic-calendar' },
+    { id: 'ramadan', label: t('nav.ramadan'), icon: Sparkles, href: '/ramadan' },
+    { id: 'tools', label: t('nav.tools'), icon: Wrench, href: '/tools' },
   ];
 
   const handleNavClick = (id: string) => {
@@ -106,9 +106,13 @@ export const Header: React.FC<HeaderProps> = ({
             {navItems.slice(1).map((item) => {
               const isActive = currentRoute === item.id || (item.id === 'tools' && currentRoute.startsWith('tools'));
               return (
-                <button
+                <a
                   key={item.id}
-                  onClick={() => handleNavClick(item.id)}
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(item.id);
+                  }}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                     isActive
                       ? 'bg-emerald-100/80 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-300 font-semibold'
@@ -116,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({
                   }`}
                 >
                   {item.label}
-                </button>
+                </a>
               );
             })}
           </nav>
@@ -254,9 +258,13 @@ export const Header: React.FC<HeaderProps> = ({
             const Icon = item.icon;
             const isActive = currentRoute === item.id || (item.id === 'tools' && currentRoute.startsWith('tools'));
             return (
-              <button
+              <a
                 key={item.id}
-                onClick={() => handleNavClick(item.id)}
+                href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item.id);
+                }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
                   isActive
                     ? 'bg-emerald-800 text-white font-semibold shadow-xs'
@@ -265,7 +273,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Icon className="w-4 h-4 text-emerald-400" />
                 <span>{item.label}</span>
-              </button>
+              </a>
             );
           })}
           <div className="pt-2 mt-2 border-t border-stone-200 dark:border-stone-800 space-y-2">

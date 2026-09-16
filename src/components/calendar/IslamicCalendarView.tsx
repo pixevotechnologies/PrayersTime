@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -8,6 +8,7 @@ import {
   Clock,
   Info,
 } from 'lucide-react';
+import { updateSeoTags } from '../../services/seoManager';
 import { AppSettings, LocationData, IslamicEvent } from '../../types';
 import {
   getHijriDate,
@@ -33,6 +34,18 @@ export const IslamicCalendarView: React.FC<IslamicCalendarViewProps> = ({
 
   const year = currentDisplayDate.getFullYear();
   const month = currentDisplayDate.getMonth();
+
+  useEffect(() => {
+    updateSeoTags({
+      title: 'Islamic Calendar (Hijri) Today & Islamic Dates | Prayerstime',
+      description: 'Accurate Hijri date today, Islamic calendar converter, and major Islamic holy dates including Ramadan, Eid al-Fitr, and Eid al-Adha.',
+      canonicalPath: '/islamic-calendar',
+      breadcrumbs: [
+        { name: 'Home', path: '/' },
+        { name: 'Islamic Calendar', path: '/islamic-calendar' },
+      ],
+    });
+  }, []);
 
   const handlePrevMonth = () => {
     setCurrentDisplayDate(new Date(year, month - 1, 1));

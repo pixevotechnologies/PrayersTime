@@ -28,18 +28,18 @@ export const Footer: React.FC<FooterProps> = ({
   const methodLabel = CALCULATION_METHOD_LABELS[settings.method]?.name || settings.method;
 
   const popularCityLinks = [
-    { name: 'Makkah', route: 'city-makkah' },
-    { name: 'Madinah', route: 'city-madinah' },
-    { name: 'Riyadh', route: 'city-riyadh' },
-    { name: 'Jeddah', route: 'city-jeddah' },
-    { name: 'Jerusalem', route: 'city-jerusalem' },
-    { name: 'Cairo', route: 'city-cairo' },
-    { name: 'Istanbul', route: 'city-istanbul' },
-    { name: 'Dubai', route: 'city-dubai' },
-    { name: 'Karachi', route: 'city-karachi' },
-    { name: 'Lahore', route: 'city-lahore' },
-    { name: 'London', route: 'city-london' },
-    { name: 'New York', route: 'city-new-york' },
+    { name: 'Makkah', route: 'city-makkah', href: '/prayer-times/makkah/' },
+    { name: 'Madinah', route: 'city-madinah', href: '/prayer-times/saudi-arabia/madinah' },
+    { name: 'Riyadh', route: 'city-riyadh', href: '/prayer-times/saudi-arabia/riyadh' },
+    { name: 'Jeddah', route: 'city-jeddah', href: '/prayer-times/saudi-arabia/jeddah' },
+    { name: 'Jerusalem', route: 'city-jerusalem', href: '/prayer-times/palestine/jerusalem' },
+    { name: 'Cairo', route: 'city-cairo', href: '/prayer-times/egypt/cairo' },
+    { name: 'Istanbul', route: 'city-istanbul', href: '/prayer-times/turkey/istanbul' },
+    { name: 'Dubai', route: 'city-dubai', href: '/prayer-times/united-arab-emirates/dubai' },
+    { name: 'Karachi', route: 'city-karachi', href: '/prayer-times/pakistan/karachi' },
+    { name: 'Lahore', route: 'city-lahore', href: '/prayer-times/pakistan/lahore' },
+    { name: 'London', route: 'city-london', href: '/prayer-times/united-kingdom/london' },
+    { name: 'New York', route: 'city-new-york', href: '/prayer-times/united-states/new-york' },
   ];
 
   const handleLanguageChange = (langCode: SupportedLanguage) => {
@@ -90,60 +90,88 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <button
-                  onClick={() => onNavigate('intent-ishraq')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/ishraq-prayer-time"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('intent-ishraq');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('prayer.ishraq')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('intent-duha')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/duha-prayer-time"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('intent-duha');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('prayer.duha')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('intent-tahajjud')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/tahajjud-time"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('intent-tahajjud');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('prayer.tahajjud')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('intent-awabeen')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/awabeen-prayer-time"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('intent-awabeen');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('prayer.awabeen')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('intent-fajr')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/fajr-time"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('intent-fajr');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('prayer.fajr')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('intent-sunrise')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/sunrise-time"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('intent-sunrise');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('prayer.sunrise')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('intent-maghrib')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/maghrib-time"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('intent-maghrib');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('prayer.maghrib')}
-                </button>
+                </a>
               </li>
             </ul>
           </div>
@@ -155,16 +183,22 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <div className="grid grid-cols-2 gap-1.5 text-xs text-stone-500 dark:text-stone-400">
               {popularCityLinks.map((city) => (
-                <button
+                <a
                   key={city.name}
-                  onClick={() => {
-                    if (onSelectCity) onSelectCity(city.name);
-                    else onNavigate('prayer-times');
+                  href={city.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate(city.route);
                   }}
-                  className="text-left rtl:text-right py-1 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer"
+                  className={`text-left rtl:text-right py-1 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer ${
+                    city.name === 'Makkah'
+                      ? 'font-semibold text-emerald-800 dark:text-emerald-400'
+                      : ''
+                  }`}
+                  title={`Prayer Times in ${city.name}`}
                 >
                   {city.name}
-                </button>
+                </a>
               ))}
             </div>
           </div>
@@ -176,52 +210,76 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <button
-                  onClick={() => onNavigate('methodology')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right font-medium text-emerald-800 dark:text-emerald-400"
+                <a
+                  href="/methodology"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('methodology');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right font-medium text-emerald-800 dark:text-emerald-400 block"
                 >
                   {t('footer.methodology')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('editorial-policy')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/editorial-policy"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('editorial-policy');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('footer.editorial')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('about')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/about"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('about');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('footer.about')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('contact')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/contact"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('contact');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('footer.contact')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('privacy')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/privacy"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('privacy');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('footer.privacy')}
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('terms')}
-                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right"
+                <a
+                  href="/terms"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('terms');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
                 >
                   {t('footer.terms')}
-                </button>
+                </a>
               </li>
             </ul>
           </div>

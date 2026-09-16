@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Compass as CompassIcon,
   Navigation,
@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   MapPin,
 } from 'lucide-react';
+import { updateSeoTags } from '../../services/seoManager';
 import { LocationData } from '../../types';
 import { getQiblaInfo } from '../../services/prayerTimes';
 import { useDeviceOrientation } from '../../hooks/useDeviceOrientation';
@@ -37,6 +38,18 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
   // The angle between current device heading and Qibla bearing
   const relativeQiblaAngle = (qibla.bearing - activeHeading + 360) % 360;
   const isAligned = Math.abs(relativeQiblaAngle) < 4 || Math.abs(relativeQiblaAngle - 360) < 4;
+
+  useEffect(() => {
+    updateSeoTags({
+      title: `Qibla Direction & Online Compass — Kaaba Bearing ${qibla.bearing}° | Prayerstime`,
+      description: `Accurate Qibla compass and bearing direction (${qibla.bearing}° ${qibla.cardinal}) towards the Kaaba in Makkah from ${location.city}, ${location.country}. Real-time compass sensor and visual alignment.`,
+      canonicalPath: '/qibla',
+      breadcrumbs: [
+        { name: 'Home', path: '/' },
+        { name: 'Qibla Compass', path: '/qibla' },
+      ],
+    });
+  }, [location.city, location.country, qibla.bearing, qibla.cardinal]);
 
   return (
     <div className="space-y-8 pb-16 max-w-4xl mx-auto">

@@ -53,7 +53,13 @@ export const SpecialPrayerPage: React.FC<SpecialPrayerPageProps> = ({
     const countryName = currentLocation.country;
     const title = `${intent.primaryName} Time in ${cityName} Today | Prayerstime`;
     const description = `Today's accurate ${intent.primaryName} (${intent.arabicName}) in ${cityName}, ${countryName}. Verified timing window ${timing.windowStart} - ${timing.windowEnd}, authentic Hadith virtues, and prayer rules.`;
-    const canonicalPath = `/${intent.routeSlug}/${currentLocation.city.toLowerCase().replace(/\s+/g, '-')}`;
+    const hasCitySubroute =
+      typeof window !== 'undefined' &&
+      window.location.pathname.startsWith(`/${intent.routeSlug}/`) &&
+      window.location.pathname.replace(`/${intent.routeSlug}/`, '').length > 0;
+    const canonicalPath = hasCitySubroute
+      ? `/${intent.routeSlug}/${currentLocation.city.toLowerCase().replace(/\s+/g, '-')}`
+      : `/${intent.routeSlug}`;
 
     updateSeoTags({
       title,

@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Prayerstime — Your Daily Guide to Prayer & Faith</title>
-    <meta name="description" content="Accurate prayer times, live next-prayer countdown, Qibla compass, Islamic calendar, and essential daily tools — beautifully brought together." />
+    <title>Prayer Times Today — Accurate Salah Times, Qibla & Islamic Tools | Prayerstime</title>
+    <meta name="description" content="Check accurate prayer times today, next-prayer countdown, Qibla direction, Islamic calendar and useful daily Islamic tools with Prayerstime." />
     <meta name="theme-color" content="#064e3b" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -16,36 +16,80 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     
-    <meta property="og:title" content="Prayerstime — Your Daily Guide to Prayer & Faith" />
-    <meta property="og:description" content="Accurate prayer times, live next-prayer countdown, Qibla compass, Islamic calendar, and essential daily tools." />
+    <!-- Open Graph -->
+    <meta property="og:title" content="Prayer Times Today — Accurate Salah Times, Qibla & Islamic Tools | Prayerstime" />
+    <meta property="og:description" content="Check accurate prayer times today, next-prayer countdown, Qibla direction, Islamic calendar and useful daily Islamic tools with Prayerstime." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://prayerstime.online" />
-    <meta property="og:image" content="/pwa-512x512.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Prayerstime — Your Daily Guide to Prayer & Faith" />
-    <meta name="twitter:description" content="Accurate prayer times, live next-prayer countdown, Qibla compass, Islamic calendar, and essential daily tools." />
-    <meta name="twitter:image" content="/pwa-512x512.png" />
+    <meta property="og:url" content="https://prayerstime.online/" />
+    <meta property="og:site_name" content="Prayerstime" />
+    <meta property="og:image" content="https://prayerstime.online/pwa-512x512.png" />
 
-    <!-- Google Fonts Preconnect and Link -->
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Prayer Times Today — Accurate Salah Times, Qibla & Islamic Tools | Prayerstime" />
+    <meta name="twitter:description" content="Check accurate prayer times today, next-prayer countdown, Qibla direction, Islamic calendar and useful daily Islamic tools with Prayerstime." />
+    <meta name="twitter:image" content="https://prayerstime.online/pwa-512x512.png" />
+
+    <!-- Google Fonts Preconnect and Link (Optimized weights) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Prayerstime",
-      "url": "https://prayerstime.online",
-      "applicationCategory": "LifestyleApplication",
-      "operatingSystem": "All",
-      "description": "Your Daily Guide to Prayer & Faith. Accurate prayer times, live next-prayer countdown, Qibla compass, Islamic calendar, and essential daily tools.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://prayerstime.online/#website",
+          "url": "https://prayerstime.online/",
+          "name": "Prayerstime",
+          "description": "Check accurate prayer times today, next-prayer countdown, Qibla direction, Islamic calendar and useful daily Islamic tools with Prayerstime.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://prayerstime.online/?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://prayerstime.online/#organization",
+          "name": "Prayerstime",
+          "url": "https://prayerstime.online/",
+          "logo": "https://prayerstime.online/icon.svg",
+          "description": "Independent global Islamic platform providing verified prayer times, astronomical calculations, Qibla compass, and daily Islamic tools."
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://prayerstime.online/#webapp",
+          "name": "Prayerstime",
+          "url": "https://prayerstime.online/",
+          "applicationCategory": "LifestyleApplication",
+          "operatingSystem": "All",
+          "isAccessibleForFree": true,
+          "description": "Check accurate prayer times today, next-prayer countdown, Qibla direction, Islamic calendar and useful daily Islamic tools with Prayerstime.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": [
+            "Accurate daily prayer times (Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha)",
+            "Live next-prayer countdown timer",
+            "Interactive monthly prayer timetable with print and CSV export",
+            "Real-time Qibla compass bearing to the Kaaba",
+            "Hijri Islamic calendar and key Islamic events",
+            "Ramadan timetable with Suhoor and Iftar countdown",
+            "Daily Dhikr and Tasbih counter",
+            "Zakat calculator for gold, silver, and savings",
+            "Offline PWA support with cached calculations"
+          ]
+        }
+      ]
     }
     </script>
   </head>

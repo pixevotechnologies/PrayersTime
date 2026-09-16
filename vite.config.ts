@@ -14,9 +14,9 @@ export default defineConfig(() => {
         includeAssets: ['favicon.png', 'apple-touch-icon.png', 'icon.svg'],
         manifest: {
           id: '/',
-          name: 'Prayerstime — Your Daily Guide to Prayer & Faith',
+          name: 'Prayer Times Today — Accurate Salah Times, Qibla & Islamic Tools | Prayerstime',
           short_name: 'Prayerstime',
-          description: 'Accurate prayer times, live next-prayer countdown, Qibla compass, Islamic calendar, and essential daily tools.',
+          description: 'Check accurate prayer times today, next-prayer countdown, Qibla direction, Islamic calendar and useful daily Islamic tools with Prayerstime.',
           theme_color: '#064e3b',
           background_color: '#fcfbf9',
           display: 'standalone',

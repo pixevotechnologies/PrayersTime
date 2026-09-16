@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ShieldCheck, BookOpen, Mail, FileText, CheckCircle2 } from 'lucide-react';
+import { updateSeoTags } from '../../services/seoManager';
 
 interface StaticPageProps {
   pageType: 'about' | 'privacy' | 'terms' | 'contact';
@@ -7,6 +8,58 @@ interface StaticPageProps {
 }
 
 export const StaticPages: React.FC<StaticPageProps> = ({ pageType, onNavigate }) => {
+  useEffect(() => {
+    switch (pageType) {
+      case 'about':
+        updateSeoTags({
+          title: 'About Prayerstime — Accurate, Ad-Free Islamic Companion',
+          description:
+            'Learn about Prayerstime: our mission for distraction-free, privacy-first, and astronomically accurate Islamic prayer times and tools.',
+          canonicalPath: '/about',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'About', path: '/about' },
+          ],
+        });
+        break;
+      case 'privacy':
+        updateSeoTags({
+          title: 'Privacy Policy — Prayerstime',
+          description:
+            'Prayerstime prioritizes your privacy. We do not track, profile, or sell your location or personal data.',
+          canonicalPath: '/privacy',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Privacy Policy', path: '/privacy' },
+          ],
+        });
+        break;
+      case 'terms':
+        updateSeoTags({
+          title: 'Terms of Service — Prayerstime',
+          description:
+            'Read the terms and conditions for using Prayerstime prayer calculations, Qibla compass, and daily Islamic tools.',
+          canonicalPath: '/terms',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Terms of Service', path: '/terms' },
+          ],
+        });
+        break;
+      case 'contact':
+        updateSeoTags({
+          title: 'Contact Us — Prayerstime',
+          description:
+            'Get in touch with the Prayerstime team for feedback, calculation inquiries, or partnership questions.',
+          canonicalPath: '/contact',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Contact', path: '/contact' },
+          ],
+        });
+        break;
+    }
+  }, [pageType]);
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-16">
       <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
