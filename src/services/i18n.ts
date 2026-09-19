@@ -87,6 +87,36 @@ export const TRANSLATIONS = {
     bn: 'সম্পাদকীয় নীতি',
     fr: 'Politique éditoriale',
   },
+  'nav.guide': {
+    en: 'Prayer Guide',
+    ar: 'دليل الصلاة',
+    ur: 'رہنمائے نماز',
+    hi: 'नमाज़ गाइड',
+    id: 'Panduan Sholat',
+    tr: 'Namaz Rehberi',
+    bn: 'নামাজ গাইড',
+    fr: 'Guide de prière',
+  },
+  'nav.makkah': {
+    en: 'Makkah',
+    ar: 'مكة المكرمة',
+    ur: 'مکہ مکرمہ',
+    hi: 'मक्का',
+    id: 'Makkah',
+    tr: 'Mekke',
+    bn: 'মক্কা',
+    fr: 'La Mecque',
+  },
+  'nav.madinah': {
+    en: 'Madinah',
+    ar: 'المدينة المنورة',
+    ur: 'مدینہ منورہ',
+    hi: 'मदीना',
+    id: 'Madinah',
+    tr: 'Medine',
+    bn: 'মদীনা',
+    fr: 'Médine',
+  },
 
   // Prayers
   'prayer.fajr': {

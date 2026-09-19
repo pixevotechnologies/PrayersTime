@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://prayerstime.online/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://prayerstime.online/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://prayerstime.online/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://prayerstime.online/ar/"/>
+    <xhtml:link rel="alternate" hreflang="ur" href="https://prayerstime.online/ur/"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://prayerstime.online/hi/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://prayerstime.online/id/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://prayerstime.online/tr/"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://prayerstime.online/bn/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://prayerstime.online/fr/"/>
+  </url>
+
+  <!-- Global Prayer Times Directory -->
+  <url>
+    <loc>https://prayerstime.online/prayer-times/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Prayer Guide & Knowledge Hub -->
+  <url>
+    <loc>https://prayerstime.online/prayer-times/guide/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Qibla Direction Compass -->
+  <url>
+    <loc>https://prayerstime.online/qibla/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Islamic Calendar & Events -->
+  <url>
+    <loc>https://prayerstime.online/islamic-calendar/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Ramadan Timetable & Hub -->
+  <url>
+    <loc>https://prayerstime.online/ramadan/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Islamic Utilities & Tools -->
+  <url>
+    <loc>https://prayerstime.online/tools/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/tools/daily-dhikr/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/tools/zakat-calculator/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trust, Authority & Policies -->
+  <url>
+    <loc>https://prayerstime.online/methodology/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/editorial-policy/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/about/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/contact/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/privacy/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/terms/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>

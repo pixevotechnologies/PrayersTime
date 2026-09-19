@@ -30,8 +30,9 @@ import {
   formatTime,
 } from '../../services/prayerTimes';
 import { updateSeoTags } from '../../services/seoManager';
-import { SupportedLanguage } from '../../services/seoData';
+import { SupportedLanguage, MULTILINGUAL_SEO_TEMPLATES } from '../../services/seoData';
 import { useLanguage } from '../../services/i18n';
+import { MAKKAH_LOCALIZED_CONTENT } from '../../services/makkahMadinahContentI18n';
 
 // Official Makkah Location & Coordinate Parameters
 export const MAKKAH_LOCATION: LocationData = {
@@ -125,50 +126,31 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
     return () => clearInterval(timer);
   }, [prayersData]);
 
-  // Comprehensive, human-written FAQs for Makkah
+  const makkahContent = useMemo(() => {
+    return MAKKAH_LOCALIZED_CONTENT[language as SupportedLanguage] || MAKKAH_LOCALIZED_CONTENT.en;
+  }, [language]);
+
+  // Comprehensive localized FAQs for Makkah
   const makkahFaqs = useMemo(
-    () => [
-      {
-        q: 'What time is Fajr prayer in Makkah today?',
-        a: `Fajr prayer in Makkah today begins at ${fajrTime} (true astronomical dawn), calculated at an 18.5° solar depression angle under the official Umm al-Qura University methodology. Congregational prayer at Masjid al-Haram takes place approximately 20 to 25 minutes after the Azan.`,
-      },
-      {
-        q: 'What time is Maghrib and Iftar in Makkah today?',
-        a: `Maghrib prayer in Makkah today begins at ${maghribTime} exactly at sunset. For Muslims observing voluntary fasts, Shawwal, Arafah, Ashura, or Ramadan, this marks the exact time of Iftar in Makkah.`,
-      },
-      {
-        q: 'What is the difference between Makkah prayer times, namaz times, and salah times?',
-        a: 'The terms "prayer time", "namaz time" (or "namaz timing"), and "salah time" refer to the exact same five obligatory acts of worship in Islam. "Salah" (صلاة) is the original Quranic Arabic term, "Namaz" (نماز) is the widely used term throughout Urdu, Hindi, Turkish, and Persian-speaking communities, and "Prayer" is the common English designation. All refer to the identical timetable for Fajr, Dhuhr, Asr, Maghrib, and Isha in Makkah.',
-      },
-      {
-        q: 'Which calculation method is used for Makkah prayer times on this website?',
-        a: 'This website calculates Makkah prayer times strictly using the official Umm al-Qura University, Makkah methodology. This is the authentic astronomical and religious standard established by the Kingdom of Saudi Arabia and adhered to by the General Presidency for the Affairs of the Grand Mosque (Masjid al-Haram) and the Prophet\'s Mosque.',
-      },
-      {
-        q: 'What time is Isha prayer in Makkah and how is it calculated?',
-        a: `Isha prayer in Makkah today begins at ${ishaTime}. According to the Umm al-Qura standard, Isha is set at precisely 90 minutes after Maghrib throughout the year, except during the holy month of Ramadan when it is scheduled 120 minutes after Maghrib to afford worshippers sufficient time for Iftar before Taraweeh prayers.`,
-      },
-      {
-        q: 'How is Asr time calculated in Makkah?',
-        a: `Asr prayer in Makkah begins at ${asrTime} using the standard juristic method (Shafi, Maliki, and Hanbali), which determines Asr when the length of an object\'s shadow equals the shadow at noon plus the object\'s height (shadow factor 1x). This is the standard followed across Saudi Arabia and the Holy Mosque.`,
-      },
-      {
-        q: 'What is the reward for praying in Masjid al-Haram in Makkah?',
-        a: 'The Prophet Muhammad (peace be upon him) said: "One prayer in this Mosque of mine (in Madinah) is better than a thousand prayers anywhere else, except the Sacred Mosque (Masjid al-Haram in Makkah), for one prayer in it is better than one hundred thousand prayers elsewhere." (Sunan Ibn Majah 1406, Sahih).',
-      },
-      {
-        q: 'What is the Qibla direction while in Makkah?',
-        a: 'While Muslims around the world must face toward Makkah to perform their prayers, worshippers inside Makkah face directly toward the Holy Kaaba located at the center of Masjid al-Haram. Inside the Haram, prayer rows form concentric circles surrounding the Kaaba in all 360 degrees.',
-      },
-    ],
-    [fajrTime, maghribTime, ishaTime, asrTime]
+    () =>
+      makkahContent.faqs({
+        fajr: fajrTime,
+        sunrise: sunriseTime,
+        dhuhr: dhuhrTime,
+        asr: asrTime,
+        maghrib: maghribTime,
+        isha: ishaTime,
+      }),
+    [makkahContent, fajrTime, sunriseTime, dhuhrTime, asrTime, maghribTime, ishaTime]
   );
 
   // Synchronize Technical SEO tags, canonical URL, and JSON-LD schema
   useEffect(() => {
-    const title = 'Prayer Times in Makkah Today – Namaz & Salah Times';
-    const description = `Accurate today's prayer times in Makkah (Mecca), Saudi Arabia: Fajr ${fajrTime}, Dhuhr ${dhuhrTime}, Asr ${asrTime}, Maghrib ${maghribTime}, Isha ${ishaTime}. Official Umm al-Qura timetable, live countdown & monthly calendar.`;
-    const canonicalPath = '/prayer-times/makkah/';
+    const langTemplates = MULTILINGUAL_SEO_TEMPLATES[language] || MULTILINGUAL_SEO_TEMPLATES.en;
+    const cityTemplate = langTemplates.city;
+    const title = makkahContent.pageTitle(fajrTime, dhuhrTime, asrTime, maghribTime, ishaTime);
+    const description = makkahContent.metaDescription(fajrTime, dhuhrTime, asrTime, maghribTime, ishaTime);
+    const canonicalPath = '/prayer-times/saudi-arabia/makkah/';
 
     updateSeoTags({
       title,
@@ -177,17 +159,17 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
       language: (language as SupportedLanguage) || 'en',
       ogType: 'website',
       breadcrumbs: [
-        { name: 'Home', path: '/' },
-        { name: 'Prayer Times', path: '/prayer-times' },
-        { name: 'Saudi Arabia', path: '/prayer-times' },
-        { name: 'Makkah', path: '/prayer-times/makkah/' },
+        { name: cityTemplate?.breadcrumbs?.home || 'Home', path: '/' },
+        { name: cityTemplate?.breadcrumbs?.prayerTimes || 'Prayer Times', path: '/prayer-times/' },
+        { name: 'Saudi Arabia', path: '/prayer-times/saudi-arabia/' },
+        { name: 'Makkah', path: canonicalPath },
       ],
       faqs: makkahFaqs,
     });
-  }, [fajrTime, dhuhrTime, asrTime, maghribTime, ishaTime, language, makkahFaqs]);
+  }, [fajrTime, dhuhrTime, asrTime, maghribTime, ishaTime, language, makkahFaqs, makkahContent]);
 
   const handleShare = () => {
-    const url = 'https://prayerstime.online/prayer-times/makkah/';
+    const url = 'https://prayerstime.online/prayer-times/saudi-arabia/makkah/';
     if (navigator.share) {
       navigator
         .share({
@@ -310,22 +292,15 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
               <MapPin className="w-3.5 h-3.5" />
-              <span>Makkah (Mecca), Saudi Arabia</span>
-              <span className="text-emerald-500/80">·</span>
-              <span>Umm al-Qura University Standard</span>
+              <span>{makkahContent.badge}</span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-stone-900 dark:text-stone-100 tracking-tight">
-              Prayer Times in Makkah Today
+              {makkahContent.h1}
             </h1>
 
             <p className="text-sm sm:text-base text-stone-600 dark:text-stone-300 max-w-2xl">
-              Accurate daily Islamic prayer times, live next-prayer countdown, and monthly timetable
-              for Makkah al-Mukarramah. Calculated using the official{' '}
-              <strong className="font-semibold text-stone-900 dark:text-stone-100">
-                Umm al-Qura
-              </strong>{' '}
-              calendar for Masjid al-Haram.
+              {makkahContent.subtitle}
             </p>
           </div>
 
@@ -492,12 +467,12 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
 
                 {/* Context Description */}
                 <div className="text-[11px] text-stone-400 dark:text-stone-500 mt-2 pt-2 border-t border-stone-200/50 dark:border-stone-800/60">
-                  {prayer.name === 'Fajr' && 'Dawn (18.5°)'}
-                  {prayer.name === 'Sunrise' && 'Ishraq start'}
-                  {prayer.name === 'Dhuhr' && 'Zawal (Zenith)'}
-                  {prayer.name === 'Asr' && 'Shadow 1x'}
-                  {prayer.name === 'Maghrib' && 'Sunset / Iftar'}
-                  {prayer.name === 'Isha' && '+90m standard'}
+                  {prayer.name === 'Fajr' && makkahContent.prayers.fajr.tag}
+                  {prayer.name === 'Sunrise' && makkahContent.prayers.sunrise.tag}
+                  {prayer.name === 'Dhuhr' && makkahContent.prayers.dhuhr.tag}
+                  {prayer.name === 'Asr' && makkahContent.prayers.asr.tag}
+                  {prayer.name === 'Maghrib' && makkahContent.prayers.maghrib.tag}
+                  {prayer.name === 'Isha' && makkahContent.prayers.isha.tag}
                 </div>
               </div>
             );
@@ -510,12 +485,9 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
           <div>
             <p>
               <strong className="font-semibold text-stone-900 dark:text-stone-100">
-                Official Umm al-Qura Calculation Method:
+                {makkahContent.methodologyTitle}:
               </strong>{' '}
-              Times for Makkah are calculated using the coordinates of the Kaaba (21.4225° N, 39.8262° E)
-              following the Umm al-Qura University calendar. Fajr is calculated at an 18.5° solar
-              depression angle, Asr follows the standard 1x shadow factor, and Isha is set 90 minutes
-              after Maghrib (120 minutes during Ramadan).
+              {makkahContent.methodologyText}
             </p>
           </div>
         </div>
@@ -527,10 +499,10 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
           <div>
             <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-              Monthly Makkah Prayer Timetable — {selectedMonthName}
+              {makkahContent.monthlyHeading(selectedMonthName)}
             </h2>
             <p className="text-xs text-stone-500 dark:text-stone-400">
-              Complete Fajr, Sunrise, Dhuhr, Asr, Maghrib, and Isha timetable for Makkah
+              {makkahContent.monthlySubtitle}
             </p>
           </div>
 
@@ -649,39 +621,19 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
       <section className="space-y-8 pt-4 border-t border-stone-200 dark:border-stone-800">
         <div className="space-y-4">
           <h2 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100">
-            Understanding Makkah Prayer Times, Namaz & Salah Timings
+            {makkahContent.understandingTitle}
           </h2>
           <div className="prose prose-stone dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed space-y-4 text-stone-700 dark:text-stone-300">
-            <p>
-              Whether you are searching for <strong>prayer times Makkah</strong>,{' '}
-              <strong>Makkah namaz time today</strong>, <strong>Makkah namaz timing</strong>, or{' '}
-              <strong>Makkah salah time</strong>, the daily prayer schedule for the holy city of{' '}
-              <strong>Makkah (Mecca)</strong> is among the most revered and closely observed timetables
-              in the world. Muslims globally face directly toward the Holy Kaaba in Makkah five times
-              every single day to establish their obligatory Salah.
-            </p>
-            <p>
-              Across different linguistic and cultural traditions, believers use varied terms for these
-              sacred worship windows: Arabic-speaking communities refer to them as <em>Salah</em> (صلاة),
-              millions of Muslims across Pakistan, India, Bangladesh, Turkey, and Central Asia refer to
-              them as <em>Namaz</em> (نماز) or <em>Namaz timing</em> (sometimes written as <em>nimaz time Makkah today</em> or <em>Makkah nimaz timing</em>), and English speakers simply call them <em>Islamic prayer times</em>.
-              Regardless of phrasing, all refer to the precise astronomical intervals ordained by Allah
-              and exemplified by the Messenger of Allah (peace be upon him).
-            </p>
-            <p>
-              Because Makkah al-Mukarramah is the spiritual anchor of the Muslim Ummah, live television
-              broadcasts and international satellite feeds broadcast every prayer live from{' '}
-              <strong>Masjid al-Haram</strong>. Pilgrims preparing for Hajj or Umrah, as well as Muslims
-              tuning in from across the globe, rely on an exact, uncompromised schedule to synchronize
-              their worship with the holy city.
-            </p>
+            {makkahContent.understandingParagraphs.map((paragraph, pIdx) => (
+              <p key={pIdx}>{paragraph}</p>
+            ))}
           </div>
         </div>
 
         {/* 7. INFORMATION ABOUT THE FIVE DAILY PRAYERS IN MAKKAH */}
         <div className="space-y-6">
           <h3 className="text-lg sm:text-xl font-bold text-stone-900 dark:text-stone-100">
-            The Five Daily Prayers in Makkah: Schedule & Astronomical Calculation
+            {makkahContent.prayersHeading}
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -690,17 +642,14 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                  Fajr Time Makkah (Dawn Prayer)
+                  {makkahContent.prayers.fajr.name}
                 </h4>
                 <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
                   {fajrTime}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-                Fajr in Makkah commences at the moment of true astronomical dawn (<em>al-Fajr al-Sadiq</em>),
-                when light first appears horizontally across the eastern horizon over the Hijaz mountains.
-                Under the official Umm al-Qura standard, this occurs when the sun reaches 18.5° below the
-                horizon. Fajr ends when the sun begins to rise.
+                {makkahContent.prayers.fajr.description(fajrTime)}
               </p>
             </div>
 
@@ -709,27 +658,14 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                  Sunrise (Shuruq) & Ishraq in Makkah
+                  {makkahContent.prayers.sunrise.name}
                 </h4>
                 <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400">
                   {sunriseTime}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-                Sunrise marks the exact moment the upper edge of the sun crosses the horizon in Makkah.
-                Obligatory prayer is prohibited during the sunrise transition (<em>makruh tahrimi</em>).
-                Approximately 15 to 20 minutes after sunrise, the rewarding voluntary{' '}
-                <a
-                  href="/ishraq-prayer-time"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onNavigate('intent-ishraq');
-                  }}
-                  className="text-emerald-700 dark:text-emerald-400 underline font-medium"
-                >
-                  Ishraq prayer
-                </a>{' '}
-                begins.
+                {makkahContent.prayers.sunrise.description(sunriseTime)}
               </p>
             </div>
 
@@ -738,16 +674,14 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
-                  Dhuhr Time Makkah (Midday Prayer)
+                  {makkahContent.prayers.dhuhr.name}
                 </h4>
                 <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
                   {dhuhrTime}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-                Dhuhr begins when the sun passes the celestial meridian (<em>Zawal</em>) and starts its
-                gradual descent westward. On Fridays, Dhuhr is replaced by the congregational Jumu'ah
-                khutbah and prayer in Masjid al-Haram, attended by hundreds of thousands of worshippers.
+                {makkahContent.prayers.dhuhr.description(dhuhrTime)}
               </p>
             </div>
 
@@ -756,16 +690,14 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
-                  Asr Time Makkah (Afternoon Prayer)
+                  {makkahContent.prayers.asr.name}
                 </h4>
                 <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
                   {asrTime}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-                Asr prayer in Makkah is calculated according to the standard 1x shadow factor followed in
-                Saudi Arabia and by the majority of jurists (Hanbali, Shafi, and Maliki), when the shadow
-                of an object equals its noon shadow plus the object's height.
+                {makkahContent.prayers.asr.description(asrTime)}
               </p>
             </div>
 
@@ -774,16 +706,14 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-700"></span>
-                  Maghrib Time Makkah (Sunset & Iftar)
+                  {makkahContent.prayers.maghrib.name}
                 </h4>
                 <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
                   {maghribTime}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-                Maghrib begins the moment the sun completely disappears below the horizon. In Makkah,
-                this moment is heralded by the call to prayer echoing from the minarets of the Holy Mosque,
-                and marks the commencement of Iftar for those observing fasting.
+                {makkahContent.prayers.maghrib.description(maghribTime)}
               </p>
             </div>
 
@@ -792,16 +722,14 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-base text-stone-900 dark:text-stone-100 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-800"></span>
-                  Isha Time Makkah (Night Prayer)
+                  {makkahContent.prayers.isha.name}
                 </h4>
                 <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
                   {ishaTime}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-                Under the official Umm al-Qura standard, Isha is set at a fixed 90 minutes after Maghrib
-                throughout the year (and 120 minutes during Ramadan). This ensures consistency and
-                ample time between sunset and the night prayer.
+                {makkahContent.prayers.isha.description(ishaTime)}
               </p>
             </div>
           </div>
@@ -838,7 +766,7 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100">
-                Frequently Asked Questions About Makkah Prayer Times
+                {makkahContent.faqHeading}
               </h2>
               <p className="text-xs text-stone-500 dark:text-stone-400">
                 Answers to common questions regarding Makkah namaz times, calculations, and traditions
@@ -883,6 +811,90 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <a
+              href="/prayer-times/saudi-arabia/madinah/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('city-madinah');
+              }}
+              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
+            >
+              <span>Madinah Prayer Times</span>
+              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
+            </a>
+
+            <a
+              href="/ishraq-prayer-time/makkah/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('intent-ishraq');
+              }}
+              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
+            >
+              <span>Ishraq in Makkah</span>
+              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
+            </a>
+
+            <a
+              href="/duha-prayer-time/makkah/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('intent-duha');
+              }}
+              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
+            >
+              <span>Duha & Chasht in Makkah</span>
+              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
+            </a>
+
+            <a
+              href="/tahajjud-time/makkah/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('intent-tahajjud');
+              }}
+              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
+            >
+              <span>Tahajjud in Makkah</span>
+              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
+            </a>
+
+            <a
+              href="/makruh-prayer-times/makkah/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('intent-makruh');
+              }}
+              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
+            >
+              <span>Makruh Times in Makkah</span>
+              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
+            </a>
+
+            <a
+              href="/awabeen-prayer-time/makkah/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('intent-awabeen');
+              }}
+              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
+            >
+              <span>Awabeen in Makkah</span>
+              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
+            </a>
+
+            <a
+              href="/sunrise-time/makkah/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('intent-sunrise');
+              }}
+              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
+            >
+              <span>Sunrise in Makkah</span>
+              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
+            </a>
+
+            <a
               href="/prayer-times"
               onClick={(e) => {
                 e.preventDefault();
@@ -891,42 +903,6 @@ export const MakkahPrayerPage: React.FC<MakkahPrayerPageProps> = ({
               className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
             >
               <span>Global Prayer Times</span>
-              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
-            </a>
-
-            <a
-              href="/ishraq-prayer-time"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('intent-ishraq');
-              }}
-              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
-            >
-              <span>Ishraq Prayer Time</span>
-              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
-            </a>
-
-            <a
-              href="/tahajjud-time"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('intent-tahajjud');
-              }}
-              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
-            >
-              <span>Tahajjud & Qiyam Time</span>
-              <ArrowRight className="w-3.5 h-3.5 opacity-60" />
-            </a>
-
-            <a
-              href="/duha-prayer-time"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('intent-duha');
-              }}
-              className="p-3 rounded-xl bg-white dark:bg-[#121c19] border border-stone-200 dark:border-stone-800 hover:border-emerald-500 hover:text-emerald-600 transition-all font-medium flex items-center justify-between"
-            >
-              <span>Duha & Chasht Time</span>
               <ArrowRight className="w-3.5 h-3.5 opacity-60" />
             </a>
 

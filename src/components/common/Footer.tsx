@@ -28,19 +28,24 @@ export const Footer: React.FC<FooterProps> = ({
   const methodLabel = CALCULATION_METHOD_LABELS[settings.method]?.name || settings.method;
 
   const popularCityLinks = [
-    { name: 'Makkah', route: 'city-makkah', href: '/prayer-times/makkah/' },
-    { name: 'Madinah', route: 'city-madinah', href: '/prayer-times/saudi-arabia/madinah' },
-    { name: 'Riyadh', route: 'city-riyadh', href: '/prayer-times/saudi-arabia/riyadh' },
-    { name: 'Jeddah', route: 'city-jeddah', href: '/prayer-times/saudi-arabia/jeddah' },
-    { name: 'Jerusalem', route: 'city-jerusalem', href: '/prayer-times/palestine/jerusalem' },
-    { name: 'Cairo', route: 'city-cairo', href: '/prayer-times/egypt/cairo' },
-    { name: 'Istanbul', route: 'city-istanbul', href: '/prayer-times/turkey/istanbul' },
-    { name: 'Dubai', route: 'city-dubai', href: '/prayer-times/united-arab-emirates/dubai' },
-    { name: 'Karachi', route: 'city-karachi', href: '/prayer-times/pakistan/karachi' },
-    { name: 'Lahore', route: 'city-lahore', href: '/prayer-times/pakistan/lahore' },
-    { name: 'London', route: 'city-london', href: '/prayer-times/united-kingdom/london' },
-    { name: 'New York', route: 'city-new-york', href: '/prayer-times/united-states/new-york' },
+    { name: 'Makkah', route: 'city-makkah', href: '/prayer-times/saudi-arabia/makkah/' },
+    { name: 'Madinah', route: 'city-madinah', href: '/prayer-times/saudi-arabia/madinah/' },
+    { name: 'Riyadh', route: 'city-riyadh', href: '/prayer-times/saudi-arabia/riyadh/' },
+    { name: 'Jeddah', route: 'city-jeddah', href: '/prayer-times/saudi-arabia/jeddah/' },
+    { name: 'Jerusalem', route: 'city-jerusalem', href: '/prayer-times/palestine/jerusalem/' },
+    { name: 'Cairo', route: 'city-cairo', href: '/prayer-times/egypt/cairo/' },
+    { name: 'Istanbul', route: 'city-istanbul', href: '/prayer-times/turkey/istanbul/' },
+    { name: 'Dubai', route: 'city-dubai', href: '/prayer-times/united-arab-emirates/dubai/' },
+    { name: 'Karachi', route: 'city-karachi', href: '/prayer-times/pakistan/karachi/' },
+    { name: 'Lahore', route: 'city-lahore', href: '/prayer-times/pakistan/lahore/' },
+    { name: 'London', route: 'city-london', href: '/prayer-times/united-kingdom/london/' },
+    { name: 'New York', route: 'city-new-york', href: '/prayer-times/united-states/new-york/' },
   ];
+
+  const currentPathWithoutLang =
+    typeof window !== 'undefined'
+      ? window.location.pathname.replace(/^\/(ar|ur|hi|id|tr|bn|fr)(\/|$)/, '/')
+      : '/';
 
   const handleLanguageChange = (langCode: SupportedLanguage) => {
     setLanguage(langCode);
@@ -173,6 +178,30 @@ export const Footer: React.FC<FooterProps> = ({
                   {t('prayer.maghrib')}
                 </a>
               </li>
+              <li>
+                <a
+                  href="/makruh-prayer-times/"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('intent-makruh');
+                  }}
+                  className="hover:text-amber-600 dark:hover:text-amber-400 font-medium transition-colors cursor-pointer text-left rtl:text-right block"
+                >
+                  Prohibited / Makruh Times
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/prayer-times/guide"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('knowledge-hub');
+                  }}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 font-medium text-emerald-800 dark:text-emerald-400 transition-colors cursor-pointer text-left rtl:text-right block"
+                >
+                  Complete Prayer Guide
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -291,19 +320,29 @@ export const Footer: React.FC<FooterProps> = ({
             <Globe className="w-3.5 h-3.5 text-emerald-600" />
             <span className="font-semibold text-stone-700 dark:text-stone-300">{t('nav.language')}:</span>
             <div className="flex items-center gap-2 flex-wrap">
-              {SUPPORTED_LANGUAGES.map((l) => (
-                <button
-                  key={l.code}
-                  onClick={() => handleLanguageChange(l.code)}
-                  className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
-                    language === l.code
-                      ? 'bg-emerald-100 text-emerald-900 font-bold dark:bg-emerald-950 dark:text-emerald-300'
-                      : 'hover:text-emerald-700 dark:hover:text-emerald-400'
-                  }`}
-                >
-                  {l.nativeName}
-                </button>
-              ))}
+              {SUPPORTED_LANGUAGES.map((l) => {
+                const langHref =
+                  l.code === 'en'
+                    ? (currentPathWithoutLang || '/')
+                    : `/${l.code}${currentPathWithoutLang === '/' ? '/' : currentPathWithoutLang}`;
+                return (
+                  <a
+                    key={l.code}
+                    href={langHref}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLanguageChange(l.code);
+                    }}
+                    className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                      language === l.code
+                        ? 'bg-emerald-100 text-emerald-900 font-bold dark:bg-emerald-950 dark:text-emerald-300'
+                        : 'hover:text-emerald-700 dark:hover:text-emerald-400'
+                    }`}
+                  >
+                    {l.nativeName}
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>

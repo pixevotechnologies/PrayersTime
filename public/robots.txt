@@ -9,6 +9,7 @@ Allow: /duha-prayer-time
 Allow: /chasht-prayer-time
 Allow: /tahajjud-time
 Allow: /awabeen-prayer-time
+Allow: /makruh-prayer-times/
 Allow: /fajr-time
 Allow: /sunrise-time
 Allow: /maghrib-time
@@ -24,6 +25,15 @@ Allow: /about
 Allow: /contact
 Allow: /privacy
 Allow: /terms
+
+# Multilingual Language Folders
+Allow: /ar/
+Allow: /ur/
+Allow: /hi/
+Allow: /id/
+Allow: /tr/
+Allow: /bn/
+Allow: /fr/
 
 # Crawlers should crawl CSS, JavaScript, and Web Fonts
 Allow: /*.css$

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Arabic (/ar/) Core & Key Destinations -->
+  <url>
+    <loc>https://prayerstime.online/ar/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/ar/prayer-times/saudi-arabia/makkah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/ar/prayer-times/saudi-arabia/madinah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/ar/prayer-times/guide/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Urdu (/ur/) Core & Key Destinations -->
+  <url>
+    <loc>https://prayerstime.online/ur/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/ur/prayer-times/saudi-arabia/makkah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/ur/prayer-times/saudi-arabia/madinah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/ur/prayer-times/guide/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Indonesian (/id/) Core & Key Destinations -->
+  <url>
+    <loc>https://prayerstime.online/id/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/id/prayer-times/saudi-arabia/makkah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/id/prayer-times/saudi-arabia/madinah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Turkish (/tr/) Core & Key Destinations -->
+  <url>
+    <loc>https://prayerstime.online/tr/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/tr/prayer-times/saudi-arabia/makkah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/tr/prayer-times/saudi-arabia/madinah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Bengali (/bn/) Core & Key Destinations -->
+  <url>
+    <loc>https://prayerstime.online/bn/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/bn/prayer-times/saudi-arabia/makkah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/bn/prayer-times/saudi-arabia/madinah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Hindi (/hi/) Core & Key Destinations -->
+  <url>
+    <loc>https://prayerstime.online/hi/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/hi/prayer-times/saudi-arabia/makkah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/hi/prayer-times/saudi-arabia/madinah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- French (/fr/) Core & Key Destinations -->
+  <url>
+    <loc>https://prayerstime.online/fr/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/fr/prayer-times/saudi-arabia/makkah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://prayerstime.online/fr/prayer-times/saudi-arabia/madinah/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+</urlset>

@@ -254,6 +254,41 @@ export const SPECIAL_PRAYER_INTENTS: Record<string, PrayerIntentDef> = {
       },
     ],
   },
+  makruh: {
+    id: 'makruh',
+    routeSlug: 'makruh-prayer-times',
+    primaryName: 'Makruh & Prohibited Prayer Times',
+    arabicName: 'الأوقات المكروهة للصلاة',
+    category: 'astronomical',
+    timingType: 'solar',
+    briefDescription:
+      'The three prohibited (Makruh Tahrimi) intervals of the day during which voluntary (Nafl) prayers are strictly disliked or forbidden: during sunrise until the sun clears the horizon, at solar zenith (Istiwa) before Dhuhr, and when the sun yellows before sunset until Maghrib.',
+    hadithSource: 'Sahih Muslim (831) from `Uqbah ibn `Amir (RA)',
+    hadithText:
+      'The Prophet ﷺ prohibited praying or burying the dead during three specific times: when the sun begins to rise until it is fully elevated, when the sun is at its zenith at midday until it passes the meridian, and when the sun inclines to setting until it sets.',
+    rulingsOverview:
+      'Classical jurists across the Hanafi, Shafi`i, Maliki, and Hanbali schools agree that unprompted voluntary prayers (Nafl Mutlaq) are forbidden during these intervals. For prayers with a specific cause (such as Janazah, missed Fard prayers, or Tahiyyat al-Masjid), Shafi`i and Hanbali jurists permit them while Hanafi jurists hold that only that day`s Asr may be performed before sunset if delayed due to extreme necessity.',
+    commonConfusionNote:
+      'In the Sacred Mosque (Masjid al-Haram) in Makkah, the Shafi`i school and prominent Hanbali jurists hold that prayers with reason and Tawaf prayers are permissible at any hour of the day or night based on the Hadith: "O Banu Abd Manaf, do not prevent anyone who circumambulates this House and prays at any hour of the night or day" (Sunan Abi Dawud 1894).',
+    faqs: [
+      {
+        q: 'What are the three Makruh prayer times today?',
+        a: 'The three prohibited times are: 1) From sunrise until roughly 15-20 minutes after sunrise; 2) At solar noon (Zawal / Istiwa) for roughly 10-15 minutes until Dhuhr starts; 3) Late afternoon when the sun turns yellowish/pale (~20 minutes before Maghrib) until sunset.',
+      },
+      {
+        q: 'Can I make up a missed Fajr during sunrise?',
+        a: 'No. You should wait approximately 15 to 20 minutes after sunrise until the prohibited window has ended and Ishraq time begins before offering missed prayers.',
+      },
+      {
+        q: 'Can I pray inside Masjid al-Haram during Makruh times?',
+        a: 'Many scholars, particularly within the Shafi`i tradition and Hanbali opinions, make a specific exception for Masjid al-Haram in Makkah for prayers following Tawaf based on authentic prophetic permissions.',
+      },
+      {
+        q: 'What is the ruling on praying Asr late near sunset?',
+        a: 'Delaying Asr intentionally until the sun turns pale is severely warned against in Hadith. However, if one has not yet prayed Asr, they must pray it before sunset rather than missing it completely.',
+      },
+    ],
+  },
 };
 
 export interface LocalizedSeoContent {

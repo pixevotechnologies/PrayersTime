@@ -133,6 +133,29 @@ export function calculateSpecialPrayerTiming(
       endDate = isha;
       break;
     }
+    case 'makruh': {
+      name = 'Makruh (Prohibited) Prayer Times';
+      arabicName = 'الأوقات المكروهة';
+      const m1Start = sunrise;
+      const m1End = new Date(sunrise.getTime() + 18 * 60 * 1000);
+      const m2Start = new Date(dhuhr.getTime() - 15 * 60 * 1000);
+      const m2End = dhuhr;
+      const m3Start = new Date(maghrib.getTime() - 20 * 60 * 1000);
+      const m3End = maghrib;
+
+      const nowTime = now.getTime();
+      if (nowTime < m1End.getTime()) {
+        startDate = m1Start;
+        endDate = m1End;
+      } else if (nowTime < m2End.getTime()) {
+        startDate = m2Start;
+        endDate = m2End;
+      } else {
+        startDate = m3Start;
+        endDate = m3End;
+      }
+      break;
+    }
     default: {
       name = 'Ishraq Prayer';
       arabicName = 'صلاة الإشراق';

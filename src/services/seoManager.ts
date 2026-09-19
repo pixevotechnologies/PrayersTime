@@ -39,9 +39,26 @@ export function updateSeoTags(config: SeoMetaConfig): void {
   }
   metaDesc.setAttribute('content', description);
 
-  // 4. Update Canonical
+  // 4. Update Canonical with proper language prefix and trailing slash
   let cleanPath = canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`;
-  const canonicalUrl = cleanPath === '/' ? `${BASE_URL}/` : `${BASE_URL}${cleanPath}`;
+  // Strip any existing language prefix from cleanPath (e.g. /ar/prayer-times -> /prayer-times)
+  for (const lang of SUPPORTED_LANGUAGES) {
+    if (cleanPath === `/${lang.code}` || cleanPath === `/${lang.code}/`) {
+      cleanPath = '/';
+      break;
+    } else if (cleanPath.startsWith(`/${lang.code}/`)) {
+      cleanPath = cleanPath.replace(`/${lang.code}`, '');
+      break;
+    }
+  }
+  if (cleanPath !== '/' && !cleanPath.endsWith('/')) {
+    cleanPath = `${cleanPath}/`;
+  }
+
+  const canonicalUrl =
+    language === 'en'
+      ? (cleanPath === '/' ? `${BASE_URL}/` : `${BASE_URL}${cleanPath}`)
+      : (cleanPath === '/' ? `${BASE_URL}/${language}/` : `${BASE_URL}/${language}${cleanPath}`);
 
   let canonicalLink = document.querySelector('link[rel="canonical"]');
   if (!canonicalLink) {
@@ -67,11 +84,11 @@ export function updateSeoTags(config: SeoMetaConfig): void {
   setMetaProperty('twitter:card', 'summary_large_image');
   setMetaProperty('twitter:image', ogImageUrl);
 
-  // 7. Update Hreflang Alternates
+  // 7. Update Hreflang Alternates (Path-based URLs)
   updateHreflangTags(cleanPath);
 
   // 8. Injected JSON-LD Schema
-  updateJsonLd(canonicalUrl, title, description, breadcrumbs, faqs);
+  updateJsonLd(canonicalUrl, title, description, breadcrumbs, faqs, language);
 }
 
 function setMetaProperty(nameOrProp: string, content: string): void {
@@ -115,19 +132,23 @@ function updateHreflangTags(cleanPath: string): void {
   // Remove existing dynamic hreflang tags
   document.querySelectorAll('link[rel="alternate"][hreflang]').forEach((el) => el.remove());
 
-  // Add x-default
+  // 1. Add x-default
   const xDefault = document.createElement('link');
   xDefault.setAttribute('rel', 'alternate');
   xDefault.setAttribute('hreflang', 'x-default');
-  xDefault.setAttribute('href', `${BASE_URL}${cleanPath}`);
+  xDefault.setAttribute('href', cleanPath === '/' ? `${BASE_URL}/` : `${BASE_URL}${cleanPath}`);
   document.head.appendChild(xDefault);
 
-  // Add alternates for supported languages
+  // 2. Add alternates for each supported language (path-based)
   SUPPORTED_LANGUAGES.forEach((l) => {
     const link = document.createElement('link');
     link.setAttribute('rel', 'alternate');
     link.setAttribute('hreflang', l.code);
-    link.setAttribute('href', `${BASE_URL}${cleanPath}?lang=${l.code}`);
+    const langUrl =
+      l.code === 'en'
+        ? (cleanPath === '/' ? `${BASE_URL}/` : `${BASE_URL}${cleanPath}`)
+        : (cleanPath === '/' ? `${BASE_URL}/${l.code}/` : `${BASE_URL}/${l.code}${cleanPath}`);
+    link.setAttribute('href', langUrl);
     document.head.appendChild(link);
   });
 }
@@ -137,7 +158,8 @@ function updateJsonLd(
   title: string,
   description: string,
   breadcrumbs: Array<{ name: string; path: string }>,
-  faqs: Array<{ q: string; a: string }>
+  faqs: Array<{ q: string; a: string }>,
+  language: SupportedLanguage = 'en'
 ): void {
   let scriptEl = document.getElementById('prayerstime-seo-schema') as HTMLScriptElement | null;
   if (!scriptEl) {
@@ -239,6 +261,7 @@ function updateJsonLd(
     url: canonicalUrl,
     name: title,
     description: description,
+    inLanguage: language,
     isPartOf: {
       '@id': `${BASE_URL}/#website`,
     },

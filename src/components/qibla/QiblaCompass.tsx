@@ -172,7 +172,9 @@ export const QiblaCompass: React.FC<QiblaCompassProps> = ({
           >
             {/* Golden Pointer Needle */}
             <div className="w-2.5 h-28 sm:h-36 -mt-28 sm:-mt-36 bg-gradient-to-t from-emerald-600 to-amber-500 rounded-t-full shadow-lg flex items-start justify-center">
-              <polygon points="0,0 8,14 -8,14" className="fill-amber-400 -mt-2" />
+              <svg viewBox="-8 0 16 14" className="w-4 h-3.5 -mt-2 overflow-visible">
+                <polygon points="0,0 8,14 -8,14" className="fill-amber-400" />
+              </svg>
             </div>
           </div>
 

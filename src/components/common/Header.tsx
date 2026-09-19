@@ -14,6 +14,7 @@ import {
   Wrench,
   Globe,
   Check,
+  BookOpen,
 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { PWAInstallButton } from './PWAInstallButton';
@@ -76,6 +77,9 @@ export const Header: React.FC<HeaderProps> = ({
   const navItems = [
     { id: 'home', label: t('nav.dashboard'), icon: Clock, href: '/' },
     { id: 'prayer-times', label: t('nav.prayerTimes'), icon: Clock, href: '/prayer-times' },
+    { id: 'city-makkah', label: t('nav.makkah') || 'Makkah', icon: Sparkles, href: '/prayer-times/saudi-arabia/makkah/' },
+    { id: 'city-madinah', label: t('nav.madinah') || 'Madinah', icon: Sparkles, href: '/prayer-times/saudi-arabia/madinah/' },
+    { id: 'knowledge-hub', label: t('nav.guide') || 'Prayer Guide', icon: BookOpen, href: '/prayer-times/guide' },
     { id: 'qibla', label: t('nav.qibla'), icon: Compass, href: '/qibla' },
     { id: 'islamic-calendar', label: t('nav.calendar'), icon: Calendar, href: '/islamic-calendar' },
     { id: 'ramadan', label: t('nav.ramadan'), icon: Sparkles, href: '/ramadan' },
@@ -89,6 +93,11 @@ export const Header: React.FC<HeaderProps> = ({
 
   const currentLangObj =
     SUPPORTED_LANGUAGES.find((l) => l.code === currentLanguage) || SUPPORTED_LANGUAGES[0];
+
+  const currentPathWithoutLang =
+    typeof window !== 'undefined'
+      ? window.location.pathname.replace(/^\/(ar|ur|hi|id|tr|bn|fr)(\/|$)/, '/')
+      : '/';
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[#faf8f5]/90 dark:bg-[#0c1412]/90 border-b border-stone-200/80 dark:border-emerald-900/30 transition-colors">
@@ -155,10 +164,16 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="py-1 max-h-72 overflow-y-auto">
                     {SUPPORTED_LANGUAGES.map((l) => {
                       const isSelected = currentLanguage === l.code;
+                      const langHref =
+                        l.code === 'en'
+                          ? (currentPathWithoutLang || '/')
+                          : `/${l.code}${currentPathWithoutLang === '/' ? '/' : currentPathWithoutLang}`;
                       return (
-                        <button
+                        <a
                           key={l.code}
-                          onClick={() => {
+                          href={langHref}
+                          onClick={(e) => {
+                            e.preventDefault();
                             handleSelectLanguage(l.code);
                             setLangDropdownOpen(false);
                           }}
@@ -173,7 +188,7 @@ export const Header: React.FC<HeaderProps> = ({
                             <span className="text-[10px] text-stone-400">{l.name}</span>
                           </div>
                           {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />}
-                        </button>
+                        </a>
                       );
                     })}
                   </div>

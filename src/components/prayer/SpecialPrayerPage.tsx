@@ -18,16 +18,17 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { LocationData, AppSettings } from '../../types';
-import { SPECIAL_PRAYER_INTENTS, SupportedLanguage } from '../../services/seoData';
+import { SPECIAL_PRAYER_INTENTS, MULTILINGUAL_SEO_TEMPLATES, SupportedLanguage } from '../../services/seoData';
 import { calculateSpecialPrayerTiming } from '../../services/specialPrayerCalculator';
 import { updateSeoTags } from '../../services/seoManager';
 import { POPULAR_CITIES, EnrichedCity } from '../../services/citiesData';
 
 interface SpecialPrayerPageProps {
-  intentId: string; // 'ishraq' | 'duha' | 'chasht' | 'tahajjud' | 'awabeen' | 'fajr' | 'sunrise' | 'maghrib'
+  intentId: string; // 'ishraq' | 'duha' | 'chasht' | 'tahajjud' | 'awabeen' | 'fajr' | 'sunrise' | 'maghrib' | 'makruh'
   currentLocation: LocationData;
   settings: AppSettings;
   language?: SupportedLanguage;
+  citySlug?: string | null;
   onNavigate: (route: string) => void;
   onSelectCity?: (city: EnrichedCity) => void;
 }
@@ -37,6 +38,7 @@ export const SpecialPrayerPage: React.FC<SpecialPrayerPageProps> = ({
   currentLocation,
   settings,
   language = 'en',
+  citySlug,
   onNavigate,
   onSelectCity,
 }) => {
@@ -47,19 +49,26 @@ export const SpecialPrayerPage: React.FC<SpecialPrayerPageProps> = ({
   // Dynamic calculation
   const timing = calculateSpecialPrayerTiming(intent.id, currentLocation, new Date(), settings);
 
+  // Multilingual SEO template lookup
+  const langTemplates = MULTILINGUAL_SEO_TEMPLATES[language] || MULTILINGUAL_SEO_TEMPLATES.en;
+  const seoTemplate = langTemplates[intent.id] || langTemplates.ishraq;
+
   // Update Dynamic SEO Tags & Schema.org JSON-LD
   useEffect(() => {
     const cityName = currentLocation.city;
     const countryName = currentLocation.country;
-    const title = `${intent.primaryName} Time in ${cityName} Today | Prayerstime`;
-    const description = `Today's accurate ${intent.primaryName} (${intent.arabicName}) in ${cityName}, ${countryName}. Verified timing window ${timing.windowStart} - ${timing.windowEnd}, authentic Hadith virtues, and prayer rules.`;
-    const hasCitySubroute =
-      typeof window !== 'undefined' &&
-      window.location.pathname.startsWith(`/${intent.routeSlug}/`) &&
-      window.location.pathname.replace(`/${intent.routeSlug}/`, '').length > 0;
-    const canonicalPath = hasCitySubroute
-      ? `/${intent.routeSlug}/${currentLocation.city.toLowerCase().replace(/\s+/g, '-')}`
-      : `/${intent.routeSlug}`;
+    const title = seoTemplate?.titleTemplate
+      ? seoTemplate.titleTemplate(cityName, countryName)
+      : `${intent.primaryName} Time in ${cityName} Today | Prayerstime`;
+    const description = seoTemplate?.metaDescription
+      ? seoTemplate.metaDescription(cityName, countryName)
+      : `Today's accurate ${intent.primaryName} (${intent.arabicName}) in ${cityName}, ${countryName}. Verified timing window ${timing.windowStart} - ${timing.windowEnd}, authentic Hadith virtues, and prayer rules.`;
+    
+    // Exact canonical path with city if scoped to a city, always normalized with trailing slash
+    const effectiveCitySlug = citySlug || (currentLocation.city && currentLocation.city !== 'London' ? currentLocation.city.toLowerCase().replace(/\s+/g, '-') : null);
+    const canonicalPath = effectiveCitySlug
+      ? `/${intent.routeSlug}/${effectiveCitySlug}/`
+      : `/${intent.routeSlug}/`;
 
     updateSeoTags({
       title,
@@ -68,13 +77,13 @@ export const SpecialPrayerPage: React.FC<SpecialPrayerPageProps> = ({
       language: (language as SupportedLanguage) || 'en',
       ogType: 'article',
       breadcrumbs: [
-        { name: 'Home', path: '/' },
-        { name: 'Islamic Prayers', path: '/prayer-times' },
+        { name: seoTemplate?.breadcrumbs?.home || 'Home', path: '/' },
+        { name: seoTemplate?.breadcrumbs?.prayerTimes || 'Prayer Times', path: '/prayer-times/' },
         { name: `${intent.primaryName} in ${cityName}`, path: canonicalPath },
       ],
       faqs: intent.faqs,
     });
-  }, [intent, currentLocation, timing, language]);
+  }, [intent, currentLocation, timing, language, citySlug, seoTemplate]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -172,10 +181,16 @@ export const SpecialPrayerPage: React.FC<SpecialPrayerPageProps> = ({
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-stone-900 dark:text-white tracking-tight">
-          {intent.primaryName} in{' '}
-          <span className="text-emerald-700 dark:text-emerald-400 underline decoration-emerald-500/30">
-            {currentLocation.city}
-          </span>
+          {seoTemplate?.h1 ? (
+            seoTemplate.h1(currentLocation.city, currentLocation.country)
+          ) : (
+            <>
+              {intent.primaryName} in{' '}
+              <span className="text-emerald-700 dark:text-emerald-400 underline decoration-emerald-500/30">
+                {currentLocation.city}
+              </span>
+            </>
+          )}
         </h1>
 
         <p className="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed max-w-3xl">
